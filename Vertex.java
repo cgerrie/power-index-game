@@ -3,8 +3,9 @@ import java.util.Set;
 
 public class Vertex {
 	public int inversePower;
-	public Side side;
+	public Side side, nextSide;
 	public Set<Vertex> neighbors;
+	public Position pos;
 	public Vertex() {
 		neighbors = new HashSet<>();
 	}

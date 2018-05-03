@@ -8,6 +8,12 @@ public class Main {
 	public long lastFPS = getTime();
 	public static long startTime;
 	public int fps = 0;
+	
+	Graph graph;
+	
+	double zoom = 5;
+	int timeSinceLastFrame = 0;
+	int frameTime = 100;
 
 	public static void main(String[] args) {
 		Main main = new Main();
@@ -49,14 +55,31 @@ public class Main {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0,xres,0,yres,1,-1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		
+		graph = new Graph(new Graph.GridGraph((int)(800/zoom),(int)(600/zoom),false,false), new Graph.RandomSides());
 	}
 	public void input() {
 		if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
 			isRunning = false;
 	}
 	public void draw() {
+		for(Vertex v : graph.vertices) {
+			double color = v.side.getColor();
+			GL11.glColor3d(color, color, color);
+			GL11.glBegin(GL11.GL_QUADS);
+				GL11.glVertex2d(zoom*v.pos.x, zoom*v.pos.y);
+				GL11.glVertex2d(zoom*(v.pos.x+1), zoom*v.pos.y);
+				GL11.glVertex2d(zoom*(v.pos.x+1), zoom*(v.pos.y+1));
+				GL11.glVertex2d(zoom*v.pos.x, zoom*(v.pos.y+1));
+			GL11.glEnd();
+		}
 	}
 	public void move(int delta) {
+		if((timeSinceLastFrame+=delta)>frameTime) {
+			timeSinceLastFrame = 0;
+			System.out.println("move");
+			Game.IterateGraph(graph);
+		}
 	}
 	public long getTime() {
 		return System.nanoTime() / 1000000;

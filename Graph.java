@@ -16,6 +16,7 @@ public class Graph {
 			for(int i=0;i<gridParams.x;i++) {
 				for(int j=0;j<gridParams.y;j++) {
 					verticesArray[i][j] = new Vertex();
+					verticesArray[i][j].pos = new Position(i,j);
 				}
 			}
 			// Add grid connections
@@ -25,7 +26,6 @@ public class Graph {
 						verticesArray[i][j].neighbors.add(verticesArray[(i+1)%gridParams.x][j]);
 					if(j != gridParams.y-1 || gridParams.loopy)
 						verticesArray[i][j].neighbors.add(verticesArray[i][(j+1)%gridParams.y]);
-					// TODO use Util.mod function for these \/
 					if(i != 0 || gridParams.loopx)
 						verticesArray[i][j].neighbors.add(verticesArray[Util.mod(i-1,gridParams.x)][j]);
 					if(j != 0 || gridParams.loopy)
@@ -49,7 +49,7 @@ public class Graph {
 		}
 	}
 	// Standard class for parameterizing a way of generating and connecting vertices
-	static class GraphParameters {}
+	static abstract class GraphParameters {}
 	// Particular instance for generating a 2D grid
 	static class GridGraph extends GraphParameters {
 		int x, y;
@@ -62,7 +62,7 @@ public class Graph {
 		}
 	}
 	// Standard class for parameterizing a way of assigning sides
-	static class SideParameters {}
+	static abstract class SideParameters {}
 	static class RandomSides extends SideParameters {
 		public double strongRate;
 		public RandomSides(double strongRate) {
@@ -72,4 +72,5 @@ public class Graph {
 			strongRate = 0.5;
 		}
 	}
+	static class DontInitializeSides extends SideParameters {}
 }
