@@ -3,6 +3,12 @@
  * This class contains an application for visually viewing simulations of the power index game.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.lwjgl.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
@@ -16,11 +22,12 @@ public class Main {
 	public int fps = 0;
 	// graph being simulated
 	Graph graph;
+	List<Integer> hashes;
 	// graph visualization parameters
-	double zoom = 5;
+	double zoom = 50;
 	int timeSinceLastFrame = 0;
-	int frameTime = 100;
-	
+	int frameTime = 50;
+	boolean shouldIterate;
 	// main method
 	public static void main(String[] args) {
 		Main main = new Main();
@@ -42,6 +49,18 @@ public class Main {
 			updateFPS();
 			Display.update();
 			Display.sync(60);
+		}
+		try {
+			File outfile = new File("data2");
+			PrintWriter outWriter = new PrintWriter(outfile);
+			for(int i : hashes) {
+				outWriter.println(i);
+			}
+			outWriter.flush();
+			outWriter.close();
+			System.out.println("done writing to file");
+		} catch(FileNotFoundException e) {
+			System.err.println("file not found");
 		}
 	}
 	// initialization; gets run once at beginning of start() main loop
@@ -67,13 +86,19 @@ public class Main {
 		GL11.glOrtho(0,xres,0,yres,1,-1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		// initialize graph
-		graph = new Graph(new Graph.GridGraph((int)(800/zoom),(int)(600/zoom),false,false), new Graph.RandomSides());
+		graph = new Graph(new Graph.GridGraph((int)(600/zoom),(int)(600/zoom),false,false), new Graph.RandomSides());
+		hashes = new LinkedList<>();
+		shouldIterate = false;
 	}
 	// this method is for handling input, and is called each frame
 	public void input() {
 		// exit
 		if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
 			isRunning = false;
+		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE))
+			shouldIterate = true;
+		else
+			shouldIterate = false;
 	}
 	// this method is for drawing the visualizaiton, and is called each frame
 	public void draw() {
@@ -92,9 +117,10 @@ public class Main {
 	// this method is for animating, and is called each frame along with the time in ms since last frame
 	public void move(int delta) {
 		// iterate graph if enough time has elapsed
-		if((timeSinceLastFrame+=delta)>frameTime) {
+		if((timeSinceLastFrame+=delta)>frameTime && shouldIterate) {
 			timeSinceLastFrame = 0;
-			System.out.println("move");
+			//System.out.println("move");
+			hashes.add(graph.hashCode());
 			Game.IterateGraph(graph);
 		}
 	}
@@ -110,7 +136,7 @@ public class Main {
 	}
 	public void updateFPS() {
 		if(getTime() - lastFPS > 1000) {
-			System.out.println("FPS: "+ fps);
+			//System.out.println("FPS: "+ fps);
 			fps = 0;
 			lastFPS+=1000;
 		}

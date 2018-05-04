@@ -14,8 +14,8 @@ public enum Side {
 	// this is used by the draw method of Main to color the graph different colors for each side
 	public double getColor() {
 		switch(this) {
-		case STRONG: return 1;
-		case WEAK: return 0.5;
+		case STRONG: return 0.1;
+		case WEAK: return 1;
 		default: return 0;
 		}
 	}

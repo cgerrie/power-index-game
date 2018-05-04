@@ -27,7 +27,7 @@ public class Game {
 		Vertex maxInfluenceNeighbor;
 		for(Vertex v : currentGraph.vertices) {
 			// find the neighbor with the highest non-zero power
-			maxInfluenceNeighbor = null;
+			maxInfluenceNeighbor = v.inversePower!=0?v:null;
 			for(Vertex w : v.neighbors) {
 				if(w.inversePower != 0) {
 					if(maxInfluenceNeighbor == null)

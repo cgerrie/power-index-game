@@ -3,23 +3,28 @@
  * This class represents a graph for the game.
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public class Graph {
 	// set of vertices composing the graph
-	Set<Vertex> vertices;
+	//Set<Vertex> vertices;
+	List<Vertex> vertices;
 	public Graph() {
-		vertices = new HashSet<>();
+		//vertices = new HashSet<>(); // TODO remove
+		vertices = new ArrayList<>();
 	}
 	public Graph(GraphParameters graphParams, SideParameters sideParams) {
 		/*
 		 * Generate graph
 		 */
 		if(graphParams instanceof GridGraph) {
-			vertices = new HashSet<>();
 			GridGraph gridParams = (GridGraph)graphParams;
+			vertices = new ArrayList<>();
 			Vertex[][] verticesArray = new Vertex[gridParams.x][gridParams.y];
 			// Initialize objects in array
 			for(int i=0;i<gridParams.x;i++) {
@@ -52,10 +57,17 @@ public class Graph {
 		 * Assign Sides
 		 */
 		if(sideParams instanceof RandomSides) {
+			Random rand = new Random();
 			RandomSides randParams = (RandomSides)sideParams;
 			for(Vertex v : vertices)
-				v.side = Math.random()<randParams.strongRate?Side.STRONG:Side.WEAK;
+				v.side = rand.nextFloat()<randParams.strongRate?Side.STRONG:Side.WEAK;
 		}
+	}
+	public int hashCode() {
+		int total = 0;
+		for(Vertex v : vertices)
+			total += v.side==Side.STRONG?1:0;
+		return total;
 	}
 	// returns a distinct copy
 	public Graph clone() {
@@ -98,6 +110,7 @@ public class Graph {
 	}
 	// Standard class for parameterizing a way of assigning sides
 	static abstract class SideParameters {}
+	// randomly assigns sides
 	static class RandomSides extends SideParameters {
 		public double strongRate;
 		public RandomSides(double strongRate) {
@@ -105,6 +118,34 @@ public class Graph {
 		}
 		public RandomSides() {
 			strongRate = 0.5;
+		}
+	}
+	// assigns sides according to a specific list
+	static class SpecificSides extends SideParameters {
+		public Side[] sides;
+		public SpecificSides(Side[] sides) {
+			this.sides = sides;
+		}
+		public static SpecificSides fromBinaryString(String s) {
+			Side[] sides = new Side[s.length()];
+			for(int i=0;i<s.length();i++) {
+				switch(s.charAt(i)) {
+				case 'w': sides[i] = Side.WEAK;
+				          break;
+				case 'W': sides[i] = Side.WEAK;
+				          break;
+				case '0': sides[i] = Side.WEAK;
+				          break;
+				case 's': sides[i] = Side.STRONG;
+				          break;
+				case 'S': sides[i] = Side.STRONG;
+				          break;
+				case '1': sides[i] = Side.STRONG;
+				          break;
+				default:  sides[i] = null;
+				}
+			}
+			return new SpecificSides(sides);
 		}
 	}
 	// class to not initialize the sides to anything, so that they can be set later
