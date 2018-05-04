@@ -1,4 +1,7 @@
-
+/* Charlie Gerrie 2018
+ * 
+ * This class contains static utility functions
+ */
 public class Util {
 	public static int mod(int n, int m) {
 		n = n%m;

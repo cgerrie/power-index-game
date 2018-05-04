@@ -1,41 +1,52 @@
+/* Charlie Gerrie 2018
+ * 
+ * This class contains an application for visually viewing simulations of the power index game.
+ */
+
 import org.lwjgl.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 
 public class Main {
-	public boolean isRunning = false;
+	// standard graphics variables
+	public boolean isRunning = false; // used to control the main loop
 	public long lastFrame = getTime();
 	public long lastFPS = getTime();
 	public static long startTime;
 	public int fps = 0;
-	
+	// graph being simulated
 	Graph graph;
-	
+	// graph visualization parameters
 	double zoom = 5;
 	int timeSinceLastFrame = 0;
 	int frameTime = 100;
-
+	
+	// main method
 	public static void main(String[] args) {
 		Main main = new Main();
 		main.start();
 	}
+	// main loop
 	public void start() {
 		startTime = System.nanoTime();
 		init(800,600);
 		isRunning = true;
 		while(isRunning) {
+			// refresh screen
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-
+			// call each-frame methods
 			input();
 			draw();
 			move(getDelta());
-
+			// update screen
 			updateFPS();
 			Display.update();
 			Display.sync(60);
 		}
 	}
+	// initialization; gets run once at beginning of start() main loop
 	public void init(int xres, int yres) {
+		// create window
 		try {
 			Display.setDisplayMode(new DisplayMode(xres,yres));
 			Display.create();
@@ -43,7 +54,7 @@ public class Main {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
+		// initialize openGL environment
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
@@ -55,14 +66,18 @@ public class Main {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0,xres,0,yres,1,-1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		
+		// initialize graph
 		graph = new Graph(new Graph.GridGraph((int)(800/zoom),(int)(600/zoom),false,false), new Graph.RandomSides());
 	}
+	// this method is for handling input, and is called each frame
 	public void input() {
+		// exit
 		if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
 			isRunning = false;
 	}
+	// this method is for drawing the visualizaiton, and is called each frame
 	public void draw() {
+		// draw the vertices of the graph
 		for(Vertex v : graph.vertices) {
 			double color = v.side.getColor();
 			GL11.glColor3d(color, color, color);
@@ -74,13 +89,16 @@ public class Main {
 			GL11.glEnd();
 		}
 	}
+	// this method is for animating, and is called each frame along with the time in ms since last frame
 	public void move(int delta) {
+		// iterate graph if enough time has elapsed
 		if((timeSinceLastFrame+=delta)>frameTime) {
 			timeSinceLastFrame = 0;
 			System.out.println("move");
 			Game.IterateGraph(graph);
 		}
 	}
+	// these methods are used for timing
 	public long getTime() {
 		return System.nanoTime() / 1000000;
 	}
