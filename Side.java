@@ -19,4 +19,12 @@ public enum Side {
 		default: return 0;
 		}
 	}
+	public static Side flip(Side s) {
+		if(s == STRONG)
+			return WEAK;
+		if(s == WEAK)
+			return STRONG;
+		else
+			return null;
+	}
 }

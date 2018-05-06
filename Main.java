@@ -24,10 +24,11 @@ public class Main {
 	Graph graph;
 	List<Integer> hashes;
 	// graph visualization parameters
-	double zoom = 50;
+	double zoom = 20;
 	int timeSinceLastFrame = 0;
 	int frameTime = 50;
 	boolean shouldIterate;
+	boolean buttonHeld;
 	// main method
 	public static void main(String[] args) {
 		Main main = new Main();
@@ -86,9 +87,10 @@ public class Main {
 		GL11.glOrtho(0,xres,0,yres,1,-1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		// initialize graph
-		graph = new Graph(new Graph.GridGraph((int)(600/zoom),(int)(600/zoom),false,false), new Graph.RandomSides());
+		graph = new Graph(new Graph.GridGraph((int)(600/zoom),(int)(600/zoom),true,true), new Graph.RandomSides(1));
 		hashes = new LinkedList<>();
 		shouldIterate = false;
+		buttonHeld = false;
 	}
 	// this method is for handling input, and is called each frame
 	public void input() {
@@ -99,11 +101,24 @@ public class Main {
 			shouldIterate = true;
 		else
 			shouldIterate = false;
+		if(Mouse.isButtonDown(0)) {
+			if(!buttonHeld) {
+				buttonHeld = true;
+				int x = Mouse.getX(),
+				    y = Mouse.getY();
+				for(Vertex v : graph.vertices)
+					if(v.pos.x == x/(int)zoom && v.pos.y == y/(int)zoom)
+						v.side = Side.flip(v.side);
+			}
+		}
+		else
+			buttonHeld = false;
 	}
 	// this method is for drawing the visualizaiton, and is called each frame
 	public void draw() {
 		// draw the vertices of the graph
 		for(Vertex v : graph.vertices) {
+			// TODO coloring based on power, proportion, regional weighting, etc
 			double color = v.side.getColor();
 			GL11.glColor3d(color, color, color);
 			GL11.glBegin(GL11.GL_QUADS);
@@ -119,7 +134,6 @@ public class Main {
 		// iterate graph if enough time has elapsed
 		if((timeSinceLastFrame+=delta)>frameTime && shouldIterate) {
 			timeSinceLastFrame = 0;
-			//System.out.println("move");
 			hashes.add(graph.hashCode());
 			Game.IterateGraph(graph);
 		}

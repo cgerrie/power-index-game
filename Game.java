@@ -4,6 +4,7 @@
  */
 public class Game {
 	public static void IterateGraph(Graph currentGraph) {
+		// TODO parallelize
 		// calculate weights
 		int with, against;
 		for(Vertex v : currentGraph.vertices) {

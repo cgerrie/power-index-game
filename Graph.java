@@ -5,17 +5,12 @@
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class Graph {
-	// set of vertices composing the graph
-	//Set<Vertex> vertices;
 	List<Vertex> vertices;
 	public Graph() {
-		//vertices = new HashSet<>(); // TODO remove
 		vertices = new ArrayList<>();
 	}
 	public Graph(GraphParameters graphParams, SideParameters sideParams) {
@@ -44,6 +39,11 @@ public class Graph {
 						verticesArray[i][j].neighbors.add(verticesArray[Util.mod(i-1,gridParams.x)][j]);
 					if(j != 0 || gridParams.loopy)
 						verticesArray[i][j].neighbors.add(verticesArray[i][Util.mod(j-1,gridParams.y)]);
+					// strong grid attachments
+					// TODO test these
+					if(gridParams.isStrong) {
+						// TODO complete these
+					}
 				}
 			}
 			// Add elements from grid into set
@@ -100,14 +100,20 @@ public class Graph {
 	// Particular instance for generating a 2D grid
 	static class GridGraph extends GraphParameters {
 		int x, y;
-		boolean loopx, loopy;
+		boolean loopx, loopy, isStrong;
 		public GridGraph(int x, int y, boolean loopx, boolean loopy) {
 			this.x = x;
 			this.y = y;
 			this.loopx = loopx;
 			this.loopy = loopy;
+			isStrong = false;
+		}
+		public GridGraph(int x, int y, boolean loopx, boolean loopy, boolean isStrong) {
+			this(x,y,loopx,loopy);
+			this.isStrong = isStrong;
 		}
 	}
+	// TODO Petersen graph
 	// Standard class for parameterizing a way of assigning sides
 	static abstract class SideParameters {}
 	// randomly assigns sides
