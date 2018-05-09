@@ -9,4 +9,13 @@ public class Util {
 			n += m;
 		return n;
 	}
+	public static long factorial(int n) {
+		if(n==0)
+			return 1;
+		else
+			return n*factorial(n-1);
+	}
+	public static long chooose(int n, int m) {
+		return factorial(n)/(factorial(m)*factorial(n-m));
+	}
 }
