@@ -25,6 +25,16 @@ public class Image {
 		xres = x;
 		yres = y;
 	}
+	public Image(int x, int y, byte[] initialColor) {
+		this(x,y);
+		for(int i=0;i<xres;i++) {
+			for(int j=0;j<yres;j++) {
+				pixels[i][j][0] = initialColor[0];
+				pixels[i][j][1] = initialColor[1];
+				pixels[i][j][2] = initialColor[2];
+			}
+		}
+	}
 	public void drawVerticalLine(int x, byte[] color) {
 		for(int i=0;i<yres;i++) {
 			pixels[x][i][0] = color[0];
@@ -39,7 +49,25 @@ public class Image {
 			pixels[i][y][2] = color[2];
 		}
 	}
-	public void writeToImage(String fileLocation) {
+	public void drawSquare(int rootX, int rootY, int size, byte[][] colorSeq) {
+		for(int i=0;i<size;i++) {
+			for(int j=0;j<size;j++) {
+				pixels[rootX+i][rootY+j][0] = colorSeq[i*size+j][0];
+				pixels[rootX+i][rootY+j][1] = colorSeq[i*size+j][1];
+				pixels[rootX+i][rootY+j][2] = colorSeq[i*size+j][2];
+			}
+		}
+	}
+	public void drawSquare(int rootX, int rootY, int size, byte[] color) {
+		for(int i=0;i<size;i++) {
+			for(int j=0;j<size;j++) {
+				pixels[rootX+i][rootY+j][0] = color[0];
+				pixels[rootX+i][rootY+j][1] = color[1];
+				pixels[rootX+i][rootY+j][2] = color[2];
+			}
+		}
+	}
+	public void writeToFile(String fileLocation) {
 		final int xres = pixels.length,
 		          yres = pixels[0].length;
 		byte[] outputPixels1d = new byte[3*xres*yres];

@@ -46,6 +46,13 @@ public class Graph {
 					}
 				}
 			}
+			// if there's a specific side setup
+			if(sideParams instanceof SpecificSides) {
+				SpecificSides sidesParams = (SpecificSides)sideParams;
+				for(int i=0;i<gridParams.x;i++)
+					for(int j=0;j<gridParams.y;j++)
+						verticesArray[i][j].side = sidesParams.sides[i*gridParams.x+j];
+			}
 			// Add elements from grid into set
 			for(int i=0;i<gridParams.x;i++) {
 				for(int j=0;j<gridParams.y;j++) {

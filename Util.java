@@ -15,7 +15,14 @@ public class Util {
 		else
 			return n*factorial(n-1);
 	}
-	public static long chooose(int n, int m) {
+	public static long choose(int n, int m) {
 		return factorial(n)/(factorial(m)*factorial(n-m));
+	}
+	public static int countZeroes(String s) {
+		int n = 0;
+		for(char c : s.toCharArray())
+			if(c == '0')
+				n++;
+		return n;
 	}
 }
