@@ -30,4 +30,15 @@ public class Vertex {
 		
 		return copy;
 	}
+	public double[] getColor() {
+		double sideColor = side.getColor();
+		double[] powerColor = new double[]{inversePower<5 && inversePower>2?0.5:0,
+		                                   inversePower>3?0.5:0,
+		                                   inversePower==0?0.5:0};
+		for(int i=0;i<3;i++) {
+			powerColor[i] += sideColor;
+			powerColor[i] /= 2;
+		}
+		return powerColor;
+	}
 }

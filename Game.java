@@ -6,24 +6,6 @@ public class Game {
 	public static void IterateGraph(Graph currentGraph) {
 		// TODO parallelize
 		// calculate weights
-		int with, against;
-		for(Vertex v : currentGraph.vertices) {
-			with = 1; // since we're counting how many agree in v's closed neighborhood
-			against = 0;
-			for(Vertex w : v.neighbors) {
-				if(w.side == v.side)
-					with++;
-				else
-					against++;
-			}
-			// WEAK vertices will have 0 power if half or more members of their closed neighborhood disagree with them,
-			// whereas STRONG ones will only have 0 power if strictly more members do.
-			if((v.side == Side.STRONG && with >= against) ||
-			   (v.side == Side.WEAK && with > against))
-				v.inversePower = with;
-			else
-				v.inversePower = 0;
-		}
 		// calculate nextSide
 		Vertex maxInfluenceNeighbor;
 		for(Vertex v : currentGraph.vertices) {
@@ -50,5 +32,26 @@ public class Game {
 		// set each vertex's side to nextSide
 		for(Vertex v : currentGraph.vertices)
 			v.side = v.nextSide;
+		CalculateWeights(currentGraph);
+	}
+	public static void CalculateWeights(Graph currentGraph) {
+		int with, against;
+		for(Vertex v : currentGraph.vertices) {
+			with = 1; // since we're counting how many agree in v's closed neighborhood
+			against = 0;
+			for(Vertex w : v.neighbors) {
+				if(w.side == v.side)
+					with++;
+				else
+					against++;
+			}
+			// WEAK vertices will have 0 power if half or more members of their closed neighborhood disagree with them,
+			// whereas STRONG ones will only have 0 power if strictly more members do.
+			if((v.side == Side.STRONG && with >= against) ||
+			   (v.side == Side.WEAK && with > against))
+				v.inversePower = with;
+			else
+				v.inversePower = 0;
+		}
 	}
 }
