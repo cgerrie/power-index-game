@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class Graph {
+public class Graph implements Simulatable {
 	List<Vertex> vertices;
+	private GraphParameters gparams;
 	public Graph() {
 		vertices = new ArrayList<>();
 	}
@@ -17,6 +18,7 @@ public class Graph {
 		/*
 		 * Generate graph
 		 */
+		gparams = graphParams;
 		if(graphParams instanceof GridGraph) {
 			GridGraph gridParams = (GridGraph)graphParams;
 			vertices = new ArrayList<>();
@@ -96,8 +98,14 @@ public class Graph {
 		// return
 		return newGraph;
 	}
-	
-	
+	// Simulatable methods
+	public Side gridGet(int x, int y) {
+		return vertices.get(y*((GridGraph)gparams).x+x).side;
+	}
+	public void step() {
+		Game.CalculateWeights(this);
+		Game.IterateGraph(this);
+	}
 	/*
 	 * Classes for passing around generation parameters	
 	 */

@@ -24,7 +24,7 @@ public class Main {
 	Graph graph;
 	List<Integer> hashes;
 	// graph visualization parameters
-	double zoom = 25;
+	double zoom = 50;
 	int timeSinceLastFrame = 0;
 	int frameTime = 50;
 	boolean shouldIterate,
@@ -32,7 +32,9 @@ public class Main {
 	        isColourful,
 	        powerNeedsRecalculating,
 	        F_held;
-	// main method
+	int XRES = 600,
+	    YRES = 600;
+	    // main method
 	public static void main(String[] args) {
 		Main main = new Main();
 		main.start();
@@ -40,7 +42,7 @@ public class Main {
 	// main loop
 	public void start() {
 		startTime = System.nanoTime();
-		init(600,600);
+		init(XRES,YRES);
 		isRunning = true;
 		while(isRunning) {
 			// refresh screen
@@ -90,14 +92,14 @@ public class Main {
 		GL11.glOrtho(0,xres,0,yres,1,-1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		// initialize graph
-		Side[] set = new Side[(int)(600/zoom)*(int)(600/zoom)];
+		/*Side[] set = new Side[(int)(xres/zoom)*(int)(yres/zoom)];
 		for(int i=0;i<set.length;i++)
 			//set[i] = i%2==0?Side.WEAK:Side.STRONG;
 			//set[i] = i<set.length/2?(i/((int)(600/zoom)))%4==0||(i/((int)(600/zoom)))%4==1?Side.WEAK:Side.STRONG:Side.STRONG;
-			set[i] = (i/((int)(600/zoom)))%4==0||(i/((int)(600/zoom)))%4==1?Side.WEAK:Side.STRONG;
-		graph = new Graph(new Graph.GridGraph((int)(600/zoom),(int)(600/zoom),true,true), new Graph.SpecificSides(set));
-		
-		//graph = new Graph(new Graph.GridGraph((int)(600/zoom),(int)(600/zoom),true,true), new Graph.RandomSides(0.5));
+			set[i] = (i/((int)(xres/zoom)))%4==0||(i/((int)(xres/zoom)))%4==1?Side.WEAK:Side.STRONG;
+		graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(xres/zoom),true,true), new Graph.SpecificSides(set));
+		*/
+		graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(yres/zoom),true,true), new Graph.RandomSides(0.0));
 		Game.CalculateWeights(graph);   
 		hashes = new LinkedList<>();
 		shouldIterate = false;
@@ -128,13 +130,13 @@ public class Main {
 			buttonHeld = false;
 		// get sizes
 		if(Keyboard.isKeyDown(Keyboard.KEY_F) && !F_held) {
-			int[][] plane1 = new int[(int)(600/zoom)][(int)(600/zoom)],
-			        plane2 = new int[(int)(600/zoom)][(int)(600/zoom)];
-			for(int i=0;i<(int)(600/zoom);i++) {
-				for(int j=0;j<(int)(600/zoom);j++) {
+			int[][] plane1 = new int[(int)(XRES/zoom)][(int)(YRES/zoom)],
+			        plane2 = new int[(int)(XRES/zoom)][(int)(YRES/zoom)];
+			for(int i=0;i<(int)(XRES/zoom);i++) {
+				for(int j=0;j<(int)(YRES/zoom);j++) {
 					//System.out.println(graph.vertices.get(i*(int)(600/zoom)+j).side);
-					plane1[i][j] = graph.vertices.get(i*(int)(600/zoom)+j).side==Side.WEAK?0:-1;
-					plane2[i][j] = graph.vertices.get(i*(int)(600/zoom)+j).side==Side.STRONG?0:-1;
+					plane1[i][j] = graph.vertices.get(i*(int)(XRES/zoom)+j).side==Side.WEAK?0:-1;
+					plane2[i][j] = graph.vertices.get(i*(int)(XRES/zoom)+j).side==Side.STRONG?0:-1;
 				}
 			}
 			System.out.print("Weaks:");

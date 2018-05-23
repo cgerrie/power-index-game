@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /* Charlie Gerrie
@@ -7,6 +9,9 @@ import java.util.stream.Collectors;
 
 public class MatrixGenerator {
 	public static void main(String[] args) {
+		List<Integer> coords = getPartedCoords();
+		for(int i=0;i<512;i++)
+			System.out.println("i: "+i+"\t"+coords.get(i));
 		// for each number of weaks/strongs
 			// generate cycles
 			// rank cycles
@@ -37,9 +42,13 @@ public class MatrixGenerator {
 		boolean[][] mat = getMatrix();
 		byte[] white = new byte[]{-1,-1,-1},
 		       black = new byte[]{0,0,0};
+		List<Integer> coordMap = getPartedCoords();
+		int x, y;
 		for(int i=0;i<512;i++) {
 			for(int j=0;j<512;j++) {
-				image.drawSquare(i*BOXSIZE+1, j*BOXSIZE+1, BOXSIZE-1, mat[j][511-i]?black:white);
+				x = coordMap.indexOf(i);
+				y = coordMap.indexOf(j);
+				image.drawSquare(x*BOXSIZE+1, y*BOXSIZE+1, BOXSIZE-1, mat[j][i]?black:white);
 			}
 		}
 			// add legends at top and side
@@ -58,16 +67,32 @@ public class MatrixGenerator {
 			Graph graph = new Graph(new Graph.GridGraph(3,3,false,false),
 			                        Graph.SpecificSides.fromBinaryString(setup));
 			// find next step
+			Game.CalculateWeights(graph);
 			Game.IterateGraph(graph);
 			// translate into x
 			x = 0;
 			for(int i=0;i<9;i++)
-				x += graph.vertices.get(i).side==Side.WEAK?Math.pow(2, i):0;
+				x += graph.vertices.get(8-i).side==Side.STRONG?Math.pow(2, i):0;
 			// set all of y row to false except for x
 			for(int i=0;i<512;i++)
 				mat[i][y] = i==x;
+			
+			System.out.println("y:"+y+"\tx:"+x);
 		}
 		return mat;
 	}
-	
+	public static List<Integer> getPartedCoords() {
+		List<Integer>[] orders = new ArrayList[10];
+		for(int i=0;i<10;i++)
+			orders[i] = new ArrayList<Integer>();
+		String setup;
+		for(int i=0;i<512;i++) {
+			setup = String.format("%9s", Integer.toBinaryString(i)).replace(' ', '0');
+			orders[Util.countZeroes(setup)].add(i);	
+		}
+		List<Integer> maplist = new ArrayList<Integer>();
+		for(int i=9;i>=0;i--)
+			maplist.addAll(orders[i]);
+		return maplist;
+	}
 }

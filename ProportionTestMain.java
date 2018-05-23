@@ -25,6 +25,7 @@ public class ProportionTestMain {
 				for(int i=0;i<runs;i++) {
 					System.out.println("testing proportion "+p+" run #"+i);
 					testGraph = new Graph(new Graph.GridGraph(10,10,true,true), new Graph.RandomSides(p));
+					Game.CalculateWeights(testGraph);
 					for(int j=0;j<iterationsPer;j++)
 						Game.IterateGraph(testGraph);
 					// get proportions
