@@ -42,9 +42,17 @@ public class Graph implements Simulatable {
 					if(j != 0 || gridParams.loopy)
 						verticesArray[i][j].neighbors.add(verticesArray[i][Util.mod(j-1,gridParams.y)]);
 					// strong grid attachments
-					// TODO test these
-					if(gridParams.isStrong) {
-						// TODO complete these
+					// TODO add lines to make strong grid work without requiring looping
+					if(gridParams.isStrong && gridParams.loopx && gridParams.loopy) {
+						verticesArray[i][j].neighbors.add(verticesArray[Util.mod(i-1, gridParams.x)]
+						                                               [Util.mod(j-1, gridParams.y)]);
+						verticesArray[i][j].neighbors.add(verticesArray[Util.mod(i+1, gridParams.x)]
+						                                               [Util.mod(j-1, gridParams.y)]);
+						verticesArray[i][j].neighbors.add(verticesArray[Util.mod(i+1, gridParams.x)]
+						                                               [Util.mod(j+1, gridParams.y)]);
+						verticesArray[i][j].neighbors.add(verticesArray[Util.mod(i-1, gridParams.x)]
+						                                               [Util.mod(j+1, gridParams.y)]);
+						// TODO test strong grid
 					}
 				}
 			}

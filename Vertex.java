@@ -31,10 +31,13 @@ public class Vertex {
 		return copy;
 	}
 	public double[] getColor() {
+		return getColor(inversePower, side);
+	}
+	public static double[] getColor(int power, Side side) {
 		double sideColor = side.getColor();
-		double[] powerColor = new double[]{inversePower<5 && inversePower>2?0.5:0,
-		                                   inversePower>3?0.5:0,
-		                                   inversePower==0?0.5:0};
+		double[] powerColor = new double[]{power<5 && power>2?0.5:0,
+		                                   power>3?0.5:0,
+		                                   power==0?0.5:0};
 		for(int i=0;i<3;i++) {
 			powerColor[i] += sideColor;
 			powerColor[i] /= 2;

@@ -13,7 +13,7 @@ import org.lwjgl.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 
-public class Main {
+public class EffMain {
 	// standard graphics variables
 	public boolean isRunning = false; // used to control the main loop
 	public long lastFrame = getTime();
@@ -21,10 +21,11 @@ public class Main {
 	public static long startTime;
 	public int fps = 0;
 	// graph being simulated
-	Graph graph;
-	List<Integer> hashes;
+	//Graph graph;
+	EffGraph graph;
+	List<Integer[]> hashes;
 	// graph visualization parameters
-	double zoom = 50;
+	double zoom = 2;
 	int timeSinceLastFrame = 0;
 	int frameTime = 50;
 	boolean shouldIterate,
@@ -36,7 +37,7 @@ public class Main {
 	    YRES = 600;
 	    // main method
 	public static void main(String[] args) {
-		Main main = new Main();
+		EffMain main = new EffMain();
 		main.start();
 	}
 	// main loop
@@ -57,10 +58,12 @@ public class Main {
 			Display.sync(60);
 		}
 		try {
-			File outfile = new File("data2");
+			File outfile = new File("shapesdata");
 			PrintWriter outWriter = new PrintWriter(outfile);
-			for(int i : hashes) {
-				outWriter.println(i);
+			for(Integer[] i : hashes) {
+				for(Integer j : i)
+					outWriter.print(j+"\t");
+				outWriter.println();
 			}
 			outWriter.flush();
 			outWriter.close();
@@ -92,15 +95,26 @@ public class Main {
 		GL11.glOrtho(0,xres,0,yres,1,-1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		// initialize graph
-		Side[] set = new Side[(int)(xres/zoom)*(int)(yres/zoom)];
+		/*Side[] set = new Side[(int)(xres/zoom)*(int)(yres/zoom)];
 		for(int i=0;i<set.length;i++)
 			//set[i] = i%2==0?Side.WEAK:Side.STRONG;
 			//set[i] = i<set.length/2?(i/((int)(600/zoom)))%4==0||(i/((int)(600/zoom)))%4==1?Side.WEAK:Side.STRONG:Side.STRONG;
-			set[i] = (i/((int)(xres/zoom)))%4==0||(i/((int)(xres/zoom)))%4==1?Side.WEAK:Side.STRONG;
-		graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(xres/zoom),true,true), new Graph.SpecificSides(set));
-		
-		//graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(yres/zoom),true,true), new Graph.RandomSides(0.5));
-		Game.CalculateWeights(graph);   
+			set[i] = (i/((int)(xres/zoom)))%4==0||(i/((int)(xres/zoom)))%4==2?Side.WEAK:Side.STRONG;*/
+		//graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(xres/zoom),true,true), new Graph.SpecificSides(set));
+		Side[][] set = new Side[(int)(xres/zoom)][(int)(yres/zoom)];
+		for(int i=0;i<set.length;i++)
+			for(int j=0;j<set[i].length;j++)
+				//set[i] = i%2==0?Side.WEAK:Side.STRONG;
+				//set[i] = i<set.length/2?(i/((int)(600/zoom)))%4==0||(i/((int)(600/zoom)))%4==1?Side.WEAK:Side.STRONG:Side.STRONG;
+				//set[i] = (i/((int)(xres/zoom)))%4==0||(i/((int)(xres/zoom)))%4==2?Side.WEAK:Side.STRONG;
+				set[i][j] = Math.random()>0.5?Side.WEAK:Side.STRONG;
+		int[][] compstates = new int[(int)(xres/zoom)][(int)(yres/zoom)];
+		for(int i=0;i<compstates.length;i++)
+			for(int j=0;j<compstates[i].length;j++)
+				compstates[i][j] = 2;
+		graph = new EffGraph(set,compstates);
+		//graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(yres/zoom),true,true), new Graph.RandomSides(0.0));
+		//Game.CalculateWeights(graph);   
 		hashes = new LinkedList<>();
 		shouldIterate = false;
 		buttonHeld = false;
@@ -120,9 +134,10 @@ public class Main {
 				buttonHeld = true;
 				int x = Mouse.getX(),
 				    y = Mouse.getY();
-				for(Vertex v : graph.vertices)
+				/*for(Vertex v : graph.vertices)
 					if(v.pos.x == x/(int)zoom && v.pos.y == y/(int)zoom)
-						v.side = Side.flip(v.side);
+						v.side = Side.flip(v.side);*/
+				graph.sides[x/(int)zoom][y/(int)zoom] = Side.flip(graph.sides[x/(int)zoom][y/(int)zoom]);
 				powerNeedsRecalculating = true;
 			}
 		}
@@ -135,8 +150,10 @@ public class Main {
 			for(int i=0;i<(int)(XRES/zoom);i++) {
 				for(int j=0;j<(int)(YRES/zoom);j++) {
 					//System.out.println(graph.vertices.get(i*(int)(600/zoom)+j).side);
-					plane1[i][j] = graph.vertices.get(i*(int)(XRES/zoom)+j).side==Side.WEAK?0:-1;
-					plane2[i][j] = graph.vertices.get(i*(int)(XRES/zoom)+j).side==Side.STRONG?0:-1;
+					//plane1[i][j] = graph.vertices.get(i*(int)(XRES/zoom)+j).side==Side.WEAK?0:-1;
+					//plane2[i][j] = graph.vertices.get(i*(int)(XRES/zoom)+j).side==Side.STRONG?0:-1;
+					plane1[i][j] = graph.sides[i][j]==Side.WEAK?0:-1;
+					plane2[i][j] = graph.sides[i][j]==Side.STRONG?0:-1;
 				}
 			}
 			System.out.print("Weaks:");
@@ -157,7 +174,7 @@ public class Main {
 	// this method is for drawing the visualizaiton, and is called each frame
 	public void draw() {
 		// draw the vertices of the graph
-		for(Vertex v : graph.vertices) {
+		/*for(Vertex v : graph.vertices) {
 			// TODO coloring based on power, proportion, regional weighting, etc
 			if(isColourful) {
 				if(powerNeedsRecalculating) {
@@ -178,15 +195,43 @@ public class Main {
 				GL11.glVertex2d(zoom*v.pos.x, zoom*(v.pos.y+1));
 			GL11.glEnd();
 			
+		}*/
+		double scolour;
+		double[] pcolour;
+		double x, y;
+		for(int i=0;i<graph.sides.length;i++) {
+			for(int j=0;j<graph.sides[i].length;j++) {
+				if(isColourful) {
+					pcolour = Vertex.getColor(graph.powers[i][j], graph.sides[i][j]);
+					GL11.glColor3d(pcolour[0], pcolour[1], pcolour[2]);
+				}
+				else {
+					scolour = graph.sides[i][j].getColor();
+					GL11.glColor3d(scolour, scolour, scolour);
+				}
+				GL11.glBegin(GL11.GL_QUADS);
+					GL11.glVertex2d(zoom*i, zoom*j);
+					GL11.glVertex2d(zoom*(i+1), zoom*j);
+					GL11.glVertex2d(zoom*(i+1), zoom*(j+1));
+					GL11.glVertex2d(zoom*i, zoom*(j+1));
+				GL11.glEnd();
+			}
 		}
 	}
 	// this method is for animating, and is called each frame along with the time in ms since last frame
 	public void move(int delta) {
+		Integer[] shapes;
+		int[] shapesA;
 		// iterate graph if enough time has elapsed
 		if((timeSinceLastFrame+=delta)>frameTime && shouldIterate) {
 			timeSinceLastFrame = 0;
-			hashes.add(graph.hashCode());
-			Game.IterateGraph(graph);
+			shapesA = graph.count2shapes();
+			shapes = new Integer[shapesA.length];
+			for(int i=0;i<shapes.length;i++)
+				shapes[i] = shapesA[i];
+			hashes.add(shapes);
+			graph.stepTorus();
+			//Game.IterateGraph(graph);
 		}
 	}
 	// these methods are used for timing
