@@ -25,7 +25,7 @@ public class EffMain {
 	EffGraph graph;
 	List<Integer[]> hashes;
 	// graph visualization parameters
-	double zoom = 2;
+	double zoom = 20;
 	int timeSinceLastFrame = 0;
 	int frameTime = 50;
 	boolean shouldIterate,
@@ -107,11 +107,11 @@ public class EffMain {
 				//set[i] = i%2==0?Side.WEAK:Side.STRONG;
 				//set[i] = i<set.length/2?(i/((int)(600/zoom)))%4==0||(i/((int)(600/zoom)))%4==1?Side.WEAK:Side.STRONG:Side.STRONG;
 				//set[i] = (i/((int)(xres/zoom)))%4==0||(i/((int)(xres/zoom)))%4==2?Side.WEAK:Side.STRONG;
-				set[i][j] = Math.random()>0.5?Side.WEAK:Side.STRONG;
+				set[i][j] = Math.random()>0.0?Side.WEAK:Side.STRONG;
 		int[][] compstates = new int[(int)(xres/zoom)][(int)(yres/zoom)];
 		for(int i=0;i<compstates.length;i++)
 			for(int j=0;j<compstates[i].length;j++)
-				compstates[i][j] = 2;
+				compstates[i][j] = 11;
 		graph = new EffGraph(set,compstates);
 		//graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(yres/zoom),true,true), new Graph.RandomSides(0.0));
 		//Game.CalculateWeights(graph);   

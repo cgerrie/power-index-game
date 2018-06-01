@@ -25,7 +25,7 @@ public class EffGraph implements Simulatable {
 		int forCount;
 		for(int i=0;i<sides.length;i++) {
 			for(int j=0;j<sides[i].length;j++) {
-				if(computeStates[i][j]>=1) {
+				if((computeStates[i][j]&1)!=0) {
 					forCount = 0;
 					neighbors = closedNeighborhood(i,j);
 					for(int k=0;k<5;k++)
@@ -44,7 +44,7 @@ public class EffGraph implements Simulatable {
 		int[] neighborsPower;
 		for(int i=0;i<sides.length;i++) {
 			for(int j=0;j<sides[i].length;j++) {
-				if(computeStates[i][j]>=2) {
+				if((computeStates[i][j]&2)!=0) {
 					maxPower = 0;
 					changeTo = null;
 					neighborsPower = closedNeighborhoodPower(i,j);
@@ -77,7 +77,7 @@ public class EffGraph implements Simulatable {
 		int forCount;
 		for(int i=0;i<sides.length;i++) {
 			for(int j=0;j<sides[i].length;j++) {
-				if(computeStates[i][j]>=1) {
+				if((computeStates[i][j]&1)!=0) {
 					forCount = 0;
 					neighbors = closedNeighborhoodTorus(i,j);
 					for(int k=0;k<5;k++)
@@ -96,7 +96,7 @@ public class EffGraph implements Simulatable {
 		int[] neighborsPower;
 		for(int i=0;i<sides.length;i++) {
 			for(int j=0;j<sides[i].length;j++) {
-				if(computeStates[i][j]>=2) {
+				if((computeStates[i][j]&2)!=0) {
 					maxPower = 0;
 					changeTo = null;
 					neighborsPower = closedNeighborhoodPowerTorus(i,j);
@@ -171,6 +171,14 @@ public class EffGraph implements Simulatable {
 		for(int i=0;i<sides.length;i++)
 			for(int j=0;j<sides[i].length;j++)
 				ret[getShapeSym(i,j)]++;
+		return ret;
+	}
+	public int[] count2ShapesSymSpecified() {
+		int[] ret = new int[6];
+		for(int i=0;i<sides.length;i++)
+			for(int j=0;j<sides[i].length;j++)
+				if((computeStates[i][j]&8)!=0)
+					ret[getShapeSym(i,j)]++;
 		return ret;
 	}
 	private int getShape(int i, int j) {
