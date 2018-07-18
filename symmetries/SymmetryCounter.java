@@ -9,12 +9,12 @@ import simulation.Side;
 import simulation.Util;
 
 public class SymmetryCounter {
-	static int xres = 3,
-	           yres = 3;
-	public static boolean checkTranslations = true,
+	public static int xres = 3,
+	                  yres = 3;
+	public static boolean checkTranslations = false,
 	                      checkRotations = true,
 	                      checkReflections = true,
-	                      checkSideSym = true;
+	                      checkSideSym = false;
 	public static void main(String[] args) {
 		long max = 1 << (xres*yres);
 		LinkedList<Side[][]>[] arrangements = new LinkedList[xres*yres/2+1];
@@ -26,7 +26,7 @@ public class SymmetryCounter {
 		boolean contained;
 		String mesg;
 		try {
-			File outfile = new File("4x4configurations.txt");
+			File outfile = new File("3x3configurationsNoTrans.txt");
 			PrintWriter outWriter = new PrintWriter(outfile);
 			for(long state=0;state<max;state++) {
 				//if(state%(max/100)==0)
@@ -138,14 +138,17 @@ public class SymmetryCounter {
 				return false;
 		}
 		public int hashCode() {
-			/*int ret = 0;
-			for(int i=0;i<cells.length;i++)
-				for(int j=0;j<cells[i].length;j++)
-					ret += cells[i][j]==Side.STRONG?1:0;
+			int ret = 0;
+			for(int i=0;i<cells.length;i++) {
+				for(int j=0;j<cells[i].length;j++) {
+					if(cells[i][j]==Side.STRONG)
+						ret++;
+				}
+			}
 			if(ret>(xres*yres+1)/2)
 				ret = xres*yres-ret;
-			return ret;*/
-			return 0;
+			return ret;
+
 		}
 		public String toString() {
 			String ret = "";

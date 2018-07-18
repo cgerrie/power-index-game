@@ -1,7 +1,9 @@
 package simulation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import symmetries.SymmetryCounter;
 import symmetries.SymmetryGetter;
@@ -13,7 +15,12 @@ import symmetries.SymmetryGetter;
 
 public class EffGraph implements Simulatable {
 	public Side[][] sides, next;
-	public int[][] computeStates, powers;	
+	public int[][] computeStates, powers;
+	private static final double NONRANDOM_TRANSITION_CHANCE = 1;
+	private Function<Integer,Double> transitionFunc = null,
+	                                 randomFunc = null;
+	private int t;
+	public EffGraph() {}
 	public EffGraph(Side[][] sides, int[][] computeStates) {
 		this.sides = sides;
 		this.computeStates = computeStates;
@@ -23,6 +30,14 @@ public class EffGraph implements Simulatable {
 			powers[i] = new int[sides[i].length];
 			next[i] = new Side[sides[i].length];
 		}
+		t = 0;
+	}
+	public EffGraph(Side[][] sides, int[][] computeStates,
+	                Function<Integer, Double> transitionFunc,
+	                Function<Integer, Double> randomFunc) {
+		this(sides, computeStates);
+		this.transitionFunc = transitionFunc;
+		this.randomFunc = randomFunc;
 	}
 	public Side gridGet(int x, int y) {
 		return sides[x][y];
@@ -79,28 +94,14 @@ public class EffGraph implements Simulatable {
 			}
 		}
 	}
+	
 	public void stepTorus() {
 		// compute power
-		Side[] neighbors;
-		int forCount;
-		for(int i=0;i<sides.length;i++) {
-			for(int j=0;j<sides[i].length;j++) {
-				if((computeStates[i][j]&1)!=0) {
-					forCount = 0;
-					neighbors = closedNeighborhoodTorus(i,j);
-					for(int k=0;k<5;k++)
-						if(sides[i][j].equals(neighbors[k]))
-							forCount++;
-					if(forCount>=3)
-						powers[i][j] = forCount;
-					else
-						powers[i][j] = 0;
-				}
-			}
-		}
+		computePowerTorus();
 		// compute next
 		int maxPower;
 		Side changeTo;
+		Side[] neighbors;
 		int[] neighborsPower;
 		for(int i=0;i<sides.length;i++) {
 			for(int j=0;j<sides[i].length;j++) {
@@ -126,8 +127,34 @@ public class EffGraph implements Simulatable {
 		// set next
 		for(int i=0;i<sides.length;i++) {
 			for(int j=0;j<sides[i].length;j++) {
-				if(computeStates[i][j]>=2)
-					sides[i][j] = next[i][j];
+				if(computeStates[i][j]>=2) {
+					if((transitionFunc == null && Math.random()<NONRANDOM_TRANSITION_CHANCE) ||
+					   (transitionFunc != null && Math.random()<transitionFunc.apply(t)))
+						sides[i][j] = next[i][j];
+					else if(randomFunc != null && Math.random()<randomFunc.apply(t))
+						sides[i][j] = Math.random()<0.5?Side.STRONG:Side.WEAK;
+				}
+			}
+		}
+		
+		t++;
+	}
+	public void computePowerTorus() {
+		Side[] neighbors;
+		int forCount;
+		for(int i=0;i<sides.length;i++) {
+			for(int j=0;j<sides[i].length;j++) {
+				if((computeStates[i][j]&1)!=0) {
+					forCount = 0;
+					neighbors = closedNeighborhoodTorus(i,j);
+					for(int k=0;k<5;k++)
+						if(sides[i][j].equals(neighbors[k]))
+							forCount++;
+					if(forCount>=3)
+						powers[i][j] = forCount;
+					else
+						powers[i][j] = 0;
+				}
 			}
 		}
 	}
@@ -189,7 +216,7 @@ public class EffGraph implements Simulatable {
 					ret[getShapeSym(i,j)]++;
 		return ret;
 	}
-	private int getShape(int i, int j) {
+	public int getShape(int i, int j) {
 		return (sides[i][j]==Side.STRONG?8:0)+
 		       (sides[Util.mod(i+1, sides.length)][j]==Side.STRONG?4:0)+
 		       (sides[Util.mod(i+1, sides.length)][Util.mod(j+1, sides[i].length)]==Side.STRONG?2:0)+
@@ -231,7 +258,7 @@ public class EffGraph implements Simulatable {
 		return -1;
 	}
 	public HashMap<SymmetryCounter.Arrangement, Util.IntPointer>
-	         countShapes(int xsize, int ysize, Set<SymmetryCounter.Arrangement> shapes) {
+	         countShapes(int xsize, int ysize, List<SymmetryCounter.Arrangement> shapes) {
 		HashMap<SymmetryCounter.Arrangement, Util.IntPointer> map = new HashMap<>();
 		if(xsize <= 0 || ysize <= 0)
 			return map;
@@ -251,7 +278,7 @@ public class EffGraph implements Simulatable {
 		}
 		return map;
 	}
-	public void getShape(int i, int j, int xsize, int ysize, Set<SymmetryCounter.Arrangement> shapes, SymmetryCounter.Arrangement currArr) {
+	public void getShape(int i, int j, int xsize, int ysize, List<SymmetryCounter.Arrangement> shapes, SymmetryCounter.Arrangement currArr) {
 		Side[][] shape = new Side[xsize][ysize];
 		for(int x=0;x<xsize;x++) {
 			for(int y=0;y<ysize;y++) {
@@ -262,5 +289,141 @@ public class EffGraph implements Simulatable {
 		}
 		
 		currArr.cells = shape;
+	}
+	public HashMap<Integer, Util.IntPointer> countInvPowers() {
+		HashMap<Integer, Util.IntPointer> map = new HashMap<>();
+		map.put(0, new Util.IntPointer(0));
+		map.put(3, new Util.IntPointer(0));
+		map.put(4, new Util.IntPointer(0));
+		map.put(5, new Util.IntPointer(0));
+		for(int i=0;i<sides.length;i++)
+			for(int j=0;j<sides[i].length;j++)
+				map.get(powers[i][j]).x++;
+		return map;
+	}
+	public Integer[] getPowerNeighbors() {
+		Integer[] pairs = new Integer[20];
+		for(int i=0;i<20;i++)
+			pairs[i] = 0;
+		int p1 = 0, p2 = 0, pair = -1;
+		for(int i=0;i<sides.length;i++) {
+			for(int j=0;j<sides[i].length;j++) {
+				// convert inversePowers to numerals
+				switch(powers[i][j]) {
+				case 0: p1=0;
+				        break;
+				case 3: p1=1;
+				        break;
+				case 4: p1=2;
+				        break;
+				case 5: p1=3;
+				        break;
+				}
+				switch(powers[Util.mod(i+1, sides.length)][j]) {
+				case 0: p2=0;
+				        break;
+				case 3: p2=1;
+				        break;
+				case 4: p2=2;
+				        break;
+				case 5: p2=3;
+				        break;
+				}
+				// make p2 always the greater one
+				if(p2<p1) {
+					int temp = p1;
+					p1 = p2;
+					p2 = temp;
+				}
+				// set pair
+				switch(p1) {
+				case 0: pair=0;
+				        break;
+				case 1: pair=4;
+				        break;
+				case 2: pair=7;
+				        break;
+				case 3: pair=9;
+				        break;
+				}
+				pair += p2-p1;
+				// add 10 to identifier if adjacent sides are different
+				if(!sides[i][j].equals(sides[Util.mod(i+1, sides.length)][j]))
+					pair += 10;
+				// increment counter
+				pairs[pair]++;
+			}
+		}
+		return pairs;
+	}
+	public Integer[][] getShapeNeighborhoods() {
+		// array of ret[centre shape][neighbortype] counts
+		Integer[][] ret = new Integer[16][16];
+		int centreShape;
+		for(int i=0;i<sides.length;i++) {
+			for(int j=0;j<sides[i].length;j++) {
+				// get centre shape
+				centreShape = getShape(i, j);
+				// for 12 2-squares in 2-neighborhood of centre
+				for(int di=-2;di<=2;di++)
+					for(int dj=-2;dj<=2;dj++)
+						if(Math.abs(di)+Math.abs(dj)==2 || Math.abs(di)+Math.abs(dj)==1)
+							ret[centreShape][getShape(i+di, j+dj)]++;
+					// ret[centre shape][neighbor shape]++
+			}
+		}
+		return ret;
+	}
+	public Integer[][] getShapeNeighborhoodsSym() {
+		// array of ret[centre shape][neighbortype] counts
+		Integer[][] ret = new Integer[6][6];
+		for(int i=0;i<6;i++)
+			for(int j=0;j<6;j++)
+				ret[i][j] = 0;
+		int centreShape;
+		for(int i=0;i<sides.length;i++) {
+			for(int j=0;j<sides[i].length;j++) {
+				// get centre shape
+				centreShape = getShapeSym(i, j);
+				// for 12 2-squares in 2-neighborhood of centre
+				for(int di=-2;di<=2;di++)
+					for(int dj=-2;dj<=2;dj++)
+						if(Math.abs(di)+Math.abs(dj)==2 || Math.abs(di)+Math.abs(dj)==1)
+							ret[centreShape][getShapeSym(Util.mod(i+di,sides.length), Util.mod(j+dj, sides[j].length))]++;
+					// ret[centre shape][neighbor shape]++
+			}
+		}
+		return ret;
+	}
+	public void set2Shape(int x, int y, int shape) {
+		sides[x][y]=((1 & (shape>>3))!=0)?Side.STRONG:Side.WEAK;
+		sides[Util.mod(x+1, sides.length)][y]=((1 & (shape>>2))!=0)?Side.STRONG:Side.WEAK;
+		sides[Util.mod(x+1, sides.length)][Util.mod(y+1, sides[x].length)]=((1 & (shape>>1))!=0)?Side.STRONG:Side.WEAK;
+		sides[x][Util.mod(y+1, sides[x].length)]=((1 & shape)!=0)?Side.STRONG:Side.WEAK;
+	}
+	public void setNShape(int n, int x, int y, int shape) {
+		int toShift = n*n-1;
+		for(int i=0;i<n;i++)
+			for(int j=0;j<n;j++)
+				sides[Util.mod(x+i, sides.length)][Util.mod(y+j, sides[x].length)] =
+						(1 & (shape >> (toShift--)))!=0?Side.STRONG:Side.WEAK;
+	}
+	public int getNShape(int n, int x, int y) {
+		int toShift = n*n-1;
+		int ret = 0;
+		for(int i=0;i<n;i++)
+			for(int j=0;j<n;j++, toShift--)
+				ret += sides[Util.mod(x+i, sides.length)][Util.mod(y+j, sides[x].length)]==Side.STRONG?
+						1 << toShift:
+						0;
+		
+		return ret;
+	}
+	public String toString() {
+		String ret = "";
+		for(int i=0;i<sides.length;i++)
+			for(int j=0;j<sides[i].length;j++)
+				ret += sides[i][j]==Side.STRONG?"0":"1";
+		return ret;
 	}
 }

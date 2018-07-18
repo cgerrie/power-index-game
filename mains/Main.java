@@ -31,7 +31,7 @@ public class Main {
 	Graph graph;
 	List<Integer> hashes;
 	// graph visualization parameters
-	double zoom = 50;
+	double zoom = 20;
 	int timeSinceLastFrame = 0;
 	int frameTime = 50;
 	boolean shouldIterate,
@@ -103,7 +103,7 @@ public class Main {
 		for(int i=0;i<set.length;i++)
 			//set[i] = i%2==0?Side.WEAK:Side.STRONG;
 			//set[i] = i<set.length/2?(i/((int)(600/zoom)))%4==0||(i/((int)(600/zoom)))%4==1?Side.WEAK:Side.STRONG:Side.STRONG;
-			set[i] = (i/((int)(xres/zoom)))%4==0||(i/((int)(xres/zoom)))%4==1?Side.WEAK:Side.STRONG;
+			set[i] = (i/((int)(xres/zoom)))%4==0||(i/((int)(xres/zoom)))%4==2?Side.WEAK:Side.STRONG;
 		graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(xres/zoom),true,true), new Graph.SpecificSides(set));
 		
 		//graph = new Graph(new Graph.GridGraph((int)(xres/zoom),(int)(yres/zoom),true,true), new Graph.RandomSides(0.5));
