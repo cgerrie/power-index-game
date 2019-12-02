@@ -2,4 +2,4 @@
 
 Summer 2018 research project of Charlie Gerrie, expanding on work by Jordan Barrett, under Professor Jeannette Janssen, at Dalhousie University.
 
-Our findings can be found in https://github.com/cgerrie/power-index-game/blob/master/Writeup%20Template.pdf.
+Our findings can be found in [here](https://github.com/cgerrie/power-index-game/blob/master/Writeup%20Template.pdf).
