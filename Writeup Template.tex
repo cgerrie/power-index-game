@@ -18,6 +18,7 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{pgf}
+\usepackage{url}
 \usetikzlibrary{arrows}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
@@ -49,13 +50,18 @@
 \maketitle
 \newpage
 
-\begin{abstract}
-We examine the power-index game, a cellular automaton, on a torus. 
-\end{abstract}
+%\begin{abstract}
+%We examine the power-index game, a cellular automaton, on a torus. 
+%\end{abstract}
 
 \tableofcontents
 
 \section{Introduction} \label{IntroSec}
+
+\par
+How do people change their mind? How are they affected by others? How does that look in a population? These are all questions that are topical today but people have pondered for centuries. The power-index game is an attempt to model this. It had big goals, but alas, it seems like it will not be used for its intended purpose any time soon. However, its simplicity has given it a new lease at theoretical life as new questions have arisen. % What is the connection between local and global structure? What is the nature of the stability of the game? Why do these simple rules produce the intricate phenomena that we observe? This is the direction in which this research has taken the power-index game.
+
+ 
 
 \subsection{The Power Index Game} \label{PIgame}
 
@@ -66,42 +72,87 @@ We examine the power-index game, a cellular automaton, on a torus.
 % define power
 % define iteration behaviour
 % explain iteration
-\begin{definition}[Side]
-We define the set of sides $\mathbb{S}$ to be the set containing two elements $\mathfrak{s}$ and $\mathfrak{w}$. \textit{These sides will also be associated with and referred to by the colours black and white}.
-\end{definition}
+\par
+What exactly is the power-index game? It is, in short, rules for taking graphs with values on the vertices and iterating them. With zero players, the title of game can seem a misnomer.
 
-\begin{definition}[Game]
-A game $G(B,S)$ is a structure composed of both a graph $B(V,E)$ (as in board) with associated vertex and edge sets $V$ and $E$, and a mapping $S\colon V \to \mathbb{S}$, which assigns a side to each vertex.
+
+% CONTINUE
+
+\begin{definition}[Side]
+The set of sides $\mathbb{S}$ is the set containing two elements: strong ($\mathfrak{s}$) and weak ($\mathfrak{w}$). %\textit{These sides will also be associated with and referred to by the colours black and white}.
 \end{definition}
+\begin{definition}[Configuration]
+A configuration is a mapping $C\colon V \to \mathbb{S}$, where $V$ is the vertex set of a graph. \cite{ref:graphs}. 
+\end{definition}
+\begin{definition}[Game]
+A game $G(B,C)$ is a structure composed of both a graph $B(V,E)$ (as in board) with associated vertex and edge sets $V$ and $E$, and a configuration $C$, which assigns a side to each vertex.
+\end{definition}
+\begin{remark}
+We will often refer to vertices as black or white instead of strong or weak, respectively, because those are the colours we use to display them on tori. This is discussed further in section \ref{Simplification}.
+\end{remark}
 
 \begin{definition}[Iteration operator]
-We define an operator $I$ which acts on a game to iterate it. For example, $IG$ would be the game $G$ iterated once, and $I^n G$ would be it iterated $n$ times.
+We define an operator $I$ which acts on a game to iterate it. % For example, $IG$ would be the game $G$ iterated once, and $I^n G$ would be it iterated $n$ times.
 \end{definition}
 
+% SHOULD I GIVE AN EXAMPLE?
+
+
+
 \subsection{Prior Work and Variations} \label{PriorWork}
+% SHAPLEY AND SHUBIK
+\par
+The idea of the power-index was started by Lloyd Shapley and Martin Shubik. \cite{ref:PowerIndex} They developed it to model voting behavior. This was the inspiration for the Power-Index Game in its current iteration, which was developed by Richard Nowakowski.
+% WHAT THEY FOUND
+\par
+The idea of the power-index is that every cell is assigned a power based on its neighborhood, and that determines how it is able to affect its neighbors. In its current form, it is defined like this:
+\begin{equation}
+	P(v) =
+	\begin{cases}
+		\begin{cases}
+			\frac{1}{|A|} & \text{if\ } |A|>|D| \\
+			0 & \text{if\ } |D|\geq|A|
+		\end{cases} & \text{If\ }C(v)=\mathfrak{w} \\
+		\begin{cases}
+			\frac{1}{|A|} & \text{if\ } |A|\geq |D| \\
+			0 & \text{if\ } |D|> |A|
+		\end{cases} & \text{If\ }C(v)=\mathfrak{s}
+	\end{cases}
+\end{equation}
+Where $v$ is a vertex, $P(v)$ is its power, $C$ is a configuration, and $\mathfrak{s}$ and $\mathfrak{w}$ are strong and weak sides.
+\par
+Previous work on the power-index game in its current incarnation was done by Jordan Barrett and Richard Nowakowski. One of their main results of note was discovering a construction for arbitrarily large cycles. We reconfirm this result in section \ref{Astakos}. They also examined the game on many different boards. We, however, will limit ourselves to only one type of board: tori.
 
-% talk with Jordan
+% CONTINUE
 
-\subsection{Improvements on Prior Results} \label{Improvements}
+% WHAT I AM INTERESTED IN / CONNECTIONS TO THIS WORK
+
+%\subsection{Improvements on Prior Results} \label{Improvements}
 % ARBITRARY CYCLES (SHOULD THIS BE IN THE "POWER INDEX ON A TORUS" SECTION?)
 % motivate arbitrary cycles
-\par
-Recall that one of the previous results was arbitrarily large cycles. This raises the question of if cycles of any specific length can occur in the game. We have found a construction that demonstrates that this is possible.
+%\par
+%Recall that one of the previous results was arbitrarily large cycles. This raises the question of if cycles of any specific length can occur in the game. We have found a construction that demonstrates that this is possible.
 % show initial conditions for astakos
-\par
-Consider the following configuration on a torus % smallest astakos
-This construction can be generalized to a $3\times n$ torus which corresponds to a cycle length of $n$. 
+%\par
+%Consider the following configuration on a torus % smallest astakos
+%This construction can be generalized to a $3\times n$ torus which corresponds to a cycle length of $n$. 
 % show that it iterates and loops (make sure you mention that it's on a torus)
 % result: arbitrary cycles are possible
 
 \section{The Power Index Game on a Torus} \label{Main Chapter}
 %mention toroidal grid
-\subsection{Simplifications}
+\subsection{Simplifications} \label{Simplification}
+\begin{definition}[Torus]
+An $n$-by-$m$ torus is the cartesian graph product of an $n$-cycle and an $m$-cycle. Informally, it is a grid where the edges wrap around.
+\end{definition}
+
 % motivation
+\par
 The rules of the game can be restated in simpler terms when limited to a torus. All of the tori we have used have been toroidal grids, so the graphs are 4-regular. Thus, the rules from \ref{PIgame} for the power can be simplified to a simple 1-neighborhood cellular automaton with the following rules:
 % definitions
 % power
 \begin{equation}
+	\label{powerEq}
 	P(v) =
 	\begin{cases}
 		\frac{1}{3} & \text{if $|A(v)|=2$} \\
@@ -110,6 +161,62 @@ The rules of the game can be restated in simpler terms when limited to a torus. 
 		0 & \text{if $|A(v)|\in \{0,1\}$}
 	\end{cases}
 \end{equation}
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.1\linewidth}
+	\begin{tikzpicture}
+		\draw(0,0.5) rectangle (0.5,1);
+		\draw(0.5,0) rectangle (1,0.5);
+		\draw(0.5,0.5) rectangle (1,1);					% REPEAT ME!
+		\draw(0.5,1) rectangle (1,1.5);
+		\draw(1,0.5) rectangle (1.5,1);
+	\end{tikzpicture}
+	\caption{$\frac{1}{5}\ power$}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.1\linewidth}
+	\begin{tikzpicture}
+		\draw(0,0.5) rectangle (0.5,1);
+		\draw(0.5,0) rectangle (1,0.5);
+		\draw(0.5,0.5) rectangle (1,1);					% REPEAT ME! AND SPACE THEM!
+		\draw(0.5,1) rectangle (1,1.5);
+		\path[draw=white,fill=black] (1,0.5) rectangle (1.5,1);
+	\end{tikzpicture}
+	\caption{$\frac{1}{4}\ power$}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.1\linewidth}
+	\begin{tikzpicture}
+		\draw(0,0.5) rectangle (0.5,1);
+		\draw(0.5,0) rectangle (1,0.5);
+		\draw(0.5,0.5) rectangle (1,1);					% REPEAT ME!
+		\path[draw=white,fill=black] (0.5,1) rectangle (1,1.5);
+		\path[draw=white,fill=black] (1,0.5) rectangle (1.5,1);
+	\end{tikzpicture}
+	\caption{$\frac{1}{3}\ power$}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.1\linewidth}
+	\begin{tikzpicture}
+		\draw(0,0.5) rectangle (0.5,1);
+		\path[draw=white,fill=black] (0.5,0) rectangle (1,0.5);
+		\draw(0.5,0.5) rectangle (1,1);					% REPEAT ME!
+		\path[draw=white,fill=black] (0.5,1) rectangle (1,1.5);
+		\path[draw=white,fill=black] (1,0.5) rectangle (1.5,1);
+	\end{tikzpicture}
+	\caption{$0\ power$}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.1\linewidth}
+	\begin{tikzpicture}
+		\path[draw=white,fill=black] (0,0.5) rectangle (0.5,1);
+		\path[draw=white,fill=black] (0.5,0) rectangle (1,0.5);
+		\draw(0.5,0.5) rectangle (1,1);					% REPEAT ME!
+		\path[draw=white,fill=black] (0.5,1) rectangle (1,1.5);
+		\path[draw=white,fill=black] (1,0.5) rectangle (1.5,1);
+	\end{tikzpicture}
+	\caption{$0\ power$}
+	\end{subfigure}
+	\caption{all possible neighborhoods for a center cell}
+	\label{neighHeurs}
+\end{figure}
+
 % next iteration?
 	
 % results
@@ -118,29 +225,69 @@ The rules of the game can be restated in simpler terms when limited to a torus. 
 % % % % SYMMETRIES!
 \subsection{Symmetries}
 
+\par
+Before we dive fully into the power-index game, we should take a moment to examine the symmetries present. First of all, the rules of the game are rotationally invariant. The power of a given cell only depends on the number of neighbors of particular sides,
+not where they are, and the % some problem here?
+process for finding the most powerful neighbor is similar. Thus, this symmetry will be used often to reduce cases. However, one must be careful about applying this symmetry where it does not apply. There are many occasions where we will deal with larger-scale structures where rotational symmetry does not apply, or worse it is invoked as an approximation (see \ref{2squareFirst}). Translational and reflective symmetries are also present for similar reasons to rotational symmetry, and so share the same potential pitfalls.
+
+\par
+The final symmetry of the power-index game is that of the sides. Recall that sides are the values of strong or weak that are assigned to vertices on the graph the game is being played on. This applies because we are limiting ourselves to tori, which are 4-regular. Normally, strong would break ties for the majority of the closed neighborhood, but the closed neighborhoods of cells on tori have five cells, so ties are not a problem. Thus, strong and weak are equivalent and can be exchanged freely.
 % SIDE
 % ROTATIONAL
 % TRANSLATIONAL
+% MIRROR
 
 \subsection{Examples}
-
+\par
+Let us examine an example of how to iterate the game. In figure \ref{exampleIter}, we see a single cell in the center, and all cells within 2 moves from it, which is the maximum distance away that a cell can affect another during one iteration. We denote this area the \emph{2-neighborhood}, because it is the neighborhood of cells 2 away from a cell. In the figure, we see the powers of each of cell immediately around the center. We calculate these with equation \ref{powerEq}. The center cell will change to the side of the most powerful neighbor. There are two cells tied for most powerful on its left and its right. In this case, the cell will go with its own side and stay the same if possible. Thus, this cell will not change in the next iteration.
+\begin{figure}
+	\centering
+	\label{exampleIter}
+	\begin{tikzpicture}
+		\path[draw=black,fill=white] (0,0) rectangle (0.5,0.5);
+		\path[draw=white,fill=black] (-0.5,0) rectangle (0,0.5);
+		\path[draw=white,fill=black] (-1,0) rectangle (-0.5,0.5);
+		\path[draw=black,fill=white] (0.5,0) rectangle (1,0.5);
+		\path[draw=white,fill=black] (1,0) rectangle (1.5,0.5);
+		\path[draw=white,fill=black] (0,0.5) rectangle (0.5,1);
+		\path[draw=white,fill=black] (0.5,0.5) rectangle (1,1);
+		\path[draw=white,fill=black] (-0.5,0.5) rectangle (0,1);
+		\path[draw=white,fill=black] (0,1) rectangle (0.5,1.5);
+		\path[draw=white,fill=black] (0,-0.5) rectangle (0.5,0);
+		\path[draw=black,fill=white] (-0.5,-0.5) rectangle (0,0);
+		\path[draw=black,fill=white] (0.5,-0.5) rectangle (1,0);
+		\path[draw=black,fill=white] (0,-1) rectangle (0.5,-0.5);
+		
+		\node[text=black,align=center] at (0.25,0.25) {0};
+		\node[text=white,align=center] at (-0.25,0.25) {$\frac{1}{3}$};
+		\node[text=white,align=center] at (0.25,0.75) {$\frac{1}{4}$};
+		\node[text=white,align=center] at (0.25,-0.25) {0};
+		\node[text=black,align=center] at (0.75,0.25) {$\frac{1}{3}$};
+	\end{tikzpicture}
+	\caption{}
+\end{figure}
 % help people get a sense of how the game goes
 
 \subsection{Special Shapes} \label{SpecialShapes}
 
 \par
-
+Recall the definition of a configuration from section \ref{PIgame}. In short, a configuration is a particular assignment of sides to every vertex of the game board. 
 % motivation
 
-\begin{definition}[Configuration]
-A configuration is a state of an entire graph.
-\end{definition}
+%\begin{definition}[Configuration]
+%A configuration is a particular side state of an entire graph.
+%A configuration is a mapping from a board ()
+%\end{definition}
 % EXAMPLES
 
 \begin{definition}[Subconfiguration]
-A subconfiguration is an arrangement of cells, irrespective of its surrounding configuration.
+%A subconfiguration is an arrangement of cells, irrespective of its surrounding configuration.
+A subconfiguration is a configuration of a subgraph of the board of a game.
 \end{definition}
 % EXAMPLES
+\begin{example}
+Three adjacent cells in a row, where the center one is strong and the other two are weak can be a subconfiguration, in the sense that another graph can contain such an arrangement on a particular part of the board.
+\end{example}
 
 % results of these definitions
 
@@ -167,23 +314,81 @@ A 3-by-3 square is a stable subconfiguration, since if it is placed in a field o
 
 \begin{figure}
   \centering
-  \begin{subfigure}[b]{0.2\linewidth}
-    \includegraphics[width=\linewidth]{3x3_1.png}
+  \begin{subfigure}[b]{0.4\linewidth}
+    %\includegraphics[width=\linewidth]{3x3_1.png}
+    \begin{tikzpicture}
+      \foreach \x in {1,...,5} {
+        \foreach \y in {1,...,5} {
+          \draw(\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+      \foreach \x in {2,...,4} {
+        \foreach \y in {2,...,4} {
+          \path[draw=white,fill=black] (\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+    \end{tikzpicture}
     \caption{Iteration 1}
     \label{fig:3x3_1}
   \end{subfigure}
-  \begin{subfigure}[b]{0.2\linewidth}
-    \includegraphics[width=\linewidth]{3x3_2.png}
+  \begin{subfigure}[b]{0.4\linewidth}
+    %\includegraphics[width=\linewidth]{3x3_2.png}
+    \begin{tikzpicture}
+      \foreach \x in {0,...,4} {
+        \foreach \y in {0,...,4} {
+          \draw(\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+      \foreach \x in {1,...,3} {
+        \foreach \y in {1,...,3} {
+          \path[draw=white,fill=black] (\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+      \path[draw=white,fill=black] (0,1) rectangle (1,2);
+      \path[draw=white,fill=black] (0,3) rectangle (1,4);
+      \path[draw=white,fill=black] (1,0) rectangle (2,1);
+      \path[draw=white,fill=black] (3,0) rectangle (4,1);
+      \path[draw=white,fill=black] (1,4) rectangle (2,5);
+      \path[draw=white,fill=black] (3,4) rectangle (4,5);
+      \path[draw=white,fill=black] (4,1) rectangle (5,2);
+      \path[draw=white,fill=black] (4,3) rectangle (5,4);
+    \end{tikzpicture}
     \caption{Iteration 2}
     \label{fig:3x3_2}
   \end{subfigure}
-  \begin{subfigure}[b]{0.2\linewidth}
-    \includegraphics[width=\linewidth]{3x3_3.png}
+  \begin{subfigure}[b]{0.4\linewidth}
+    \begin{tikzpicture}
+      \foreach \x in {0,...,4} {
+        \foreach \y in {0,...,4} {
+          \draw(\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+      \foreach \x in {1,...,3} {
+        \foreach \y in {1,...,3} {
+          \path[draw=white,fill=black] (\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+      \path[draw=white,fill=black] (0,2) rectangle (1,3);
+      \path[draw=white,fill=black] (4,2) rectangle (5,3);
+      \path[draw=white,fill=black] (2,0) rectangle (3,1);
+      \path[draw=white,fill=black] (2,4) rectangle (3,5);
+    \end{tikzpicture}
     \caption{Iteration 3}
     \label{fig:3x3_3}
   \end{subfigure}
-  \begin{subfigure}[b]{0.2\linewidth}
-    \includegraphics[width=\linewidth]{3x3_1.png}
+  \begin{subfigure}[b]{0.4\linewidth}
+    \begin{tikzpicture}
+      \foreach \x in {1,...,5} {
+        \foreach \y in {1,...,5} {
+          \draw(\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+      \foreach \x in {2,...,4} {
+        \foreach \y in {2,...,4} {
+          \path[draw=white,fill=black] (\x,\y) rectangle (1+\x,1+\y);
+        }
+      }
+    \end{tikzpicture}
     \caption{Iteration 4}
     \label{fig:3x3_4}
   \end{subfigure}
@@ -206,7 +411,7 @@ A configuration is called parastable if it doesn't die out, but instead fills it
 \begin{example}
 A 2-by-2 square is a parastable subconfiguration. See figure \ref{ParastableFig}.
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.25\linewidth}
     \includegraphics[width=\linewidth]{2x2_1.png}
@@ -245,7 +450,7 @@ A 2-by-2 square is a parastable subconfiguration. See figure \ref{ParastableFig}
 \end{example}
 \begin{example}
 Consider the tetrominoes. All subconfigurations with less than four cells are unstable, so these are the first ones to exhibit parastability. Though the S, Z, and T tetrominoes are unstable, the L, I, and O tetrominoes are all parastable. % DIAGRAMS OF THEM
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.4\linewidth}
     \fbox{\includegraphics[width=\linewidth]{Lstart.png}}
@@ -260,15 +465,15 @@ Consider the tetrominoes. All subconfigurations with less than four cells are un
 \end{example}
 
 \par
-Not much is understood about the mechanism of parastability at this time. However, for large subconfigurations, it appears that stability or unstability are the exceptions whereas parastability is the rule.
+Not much is understood about the mechanism of parastability at this time. However, for large subconfigurations, it appears that stability or instability are the exceptions whereas parastability is the rule.
 
-\subsubsection{A Glider}
+\subsubsection{A Glider} \label{Astakos}
 \par
 We have discovered a construction to have a cycle of arbitrary length greater or equal to 6. See figure \ref{Astakos}.
 
 % DIAGRAM SHOWING POWERS
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.25\linewidth}
     \fbox{\includegraphics[width=\linewidth]{astakos1.png}}
@@ -309,7 +514,7 @@ The power-index game is capable of having arbitrary cycles.
 Cycles of length 1 through 5 are trivial. All larger cycles of length $n$ can be constructed by placing a glider on a $3$-by-$n$ board.
 \end{proof}
 \begin{remark}
-We dubbed the glider "\textit{astakos}", after the greek work for lobster.
+We dubbed the glider "\textit{astakos}", after the Greek work for lobster.
 \end{remark}
 
 \subsubsection{Uniform Power Configurations} \label{UPCs} %ACTUALLY USE THIS ACCRONYM?
@@ -329,38 +534,98 @@ Next, we will consider those with a power of $\frac{1}{4}$. In this case, every 
 % LABEL THE RIGHT ONE R, AND THE ONES ABOVE AND BELOW R AS a AND b
 \begin{figure}[H]
 	\begin{tikzpicture}
-		\draw(0,0.5) rectangle (0.5,1);
-		\draw(0.5,0) rectangle (1,0.5);
-		\draw(0.5,0.5) rectangle (1,1);					% REPEAT ME!
-		\draw(0.5,1) rectangle (1,1.5);
-		\path[draw=white,fill=black] (1,0.5) rectangle (1.5,1);
+		\draw(0,1) rectangle (1,2);
+		\draw(1,0) rectangle (2,1);
+		\draw(1,1) rectangle (2,2);					% REPEAT ME!
+		\draw(1,2) rectangle (2,3);
+		\path[draw=white,fill=black] (2,1) rectangle (3,2);
+		
+		\node[text=white,align=center] at (2.5,1.5) {R};
+		\node[align=center] at (2.5,0.5) {a};
+		\node[align=center] at (2.5,2.5) {b};
 	\end{tikzpicture}
 \end{figure}
 Now, we know that the spaces to at $a$ and $b$ must be the same side as $R$, because if they were not, then $R$ would have two neighbors of the opposite side.
-\\
-FIGURE WITH a AND b FILLED IN, AND THE CELLS ABOVE IT AND TO ITS LEFT LABELED c AND d
-\\
+\begin{figure}[H]
+	\begin{tikzpicture}
+		\draw(0,1) rectangle (1,2);
+		\draw(1,0) rectangle (2,1);
+		\draw(1,1) rectangle (2,2);
+		\draw(1,2) rectangle (2,3);
+		\path[draw=white,fill=black] (2,1) rectangle (3,2);
+		\path[draw=white,fill=black] (2,0) rectangle (3,1);
+		\path[draw=white,fill=black] (2,2) rectangle (3,3);
+		
+		\node[align=center] at (1.5,3.5) {c};
+		\node[align=center] at (2.5,3.5) {d};
+	\end{tikzpicture}
+\end{figure}
 Now we see that $c$ and $d$ must be coloured the same colour as the cells below them. We can continue this type of argument upwards and downwards, forming stripes.
 % FIGURE OF TWO ADJACENT 2-STRIPES WITH DOMAINS LEFT AND RIGHT LABELLED L AND R
-\\
+\begin{figure}[H]
+	\begin{tikzpicture}
+		\foreach \i in {0,...,5} {
+		\draw(0,\i) rectangle (1,1+\i);
+		\draw(1,\i) rectangle (2,1+\i);
+		\path[draw=white,fill=black] (2,\i) rectangle (3,1+\i);
+		\path[draw=white,fill=black] (3,\i) rectangle (4,1+\i);
+		}
+		
+		
+		\node[align=center] at (-1,2.5) {L};
+		\node[align=center] at (5,2.5) {R};
+	\end{tikzpicture}
+\end{figure}
+
 Finally, we see that the domains $L$ and $R$ must be black and white. Thus, we can continue this pattern to the left and right.
 % FINAL FIGURE
 We call this pattern a tessellation of 2-stripes, since each stripe is two cells wide. This configuration has a limitation on its dimensions. In this case, the width must be a multiple of 4 to accommodate the repeating pattern of the 2-stripes. So, for example, a UPC could not exist on a 3-by-5 torus, but one could exist on a 3-by-4 torus. On tori where both dimensions are multiples of 4, the stripes can be placed in either orientation.
 
 \par
 % UPC OF 0 POWER
-UPCs of power $0$ are somewhat more complicated than the previous ones. First off, the trivial solution to having a board with uniform power $0$ is a checkerboard pattern, where every cell has zero neighbors on its side. Note that checkerboard configurations can only exist on even-by-even tori.
-\begin{figure}[H]
+UPCs of power $0$ are somewhat more complicated than the previous ones. First off, the trivial solution to having a board with uniform power $0$ is a checkerboard pattern, where every cell has zero neighbors on its side. Note that checkerboard configurations can only exist on even-by-even tori. See figure \ref{Checkerboard} for an example. 
+\begin{figure}
   \centering
   \fbox{\includegraphics[width=0.5\linewidth]{checkers.png}}
-  \caption{Checkerboard}
+  \caption{Checkerboard configuration}
+  \label{Checkerboard}
 \end{figure}
 \par
 However, cells will also have power $0$ if they have one neighbor on the same side. In this case, we can use the inductive method we used for $\frac{1}{4}$-power. Start with a single cell.
 % DIAGRAM OF SINGLE CELL WITH UPPER, LEFT, AND BELOW CELLS THE OPPOSITE COLOUR. LABEL CENTRE S AND RIGHT CELL a
+\begin{figure}[H]
+	\begin{tikzpicture}
+		\path[draw=black,fill=white] (0,0) rectangle (1,1);
+		\path[draw=black,fill=white] (1,0) rectangle (2,1);
+		\path[draw=white,fill=black] (-1,0) rectangle (0,1);
+		\path[draw=white,fill=black] (0,1) rectangle (1,2);
+		\path[draw=white,fill=black] (0,-1) rectangle (1,0);
+		
+		\node[align=center] at (0.5,0.5) {S};
+		\node[align=center] at (1.5,0.5) {a};
+	\end{tikzpicture}
+\end{figure}
 Next we can fill in the neighbors of $a$.
 % DIAGRAM WITH RIGHT CELL NEIGHBORHOOD FILLED IN. LABEL TWO TOP CELLS b AND c, BOTTOM d AND e
-Now we recognize that the pairs of $b$ and $c$, and $d$ and $e$, are just like the pair $S$ and $a$. Thus, we can continue the pattern up and down arbitrarily. This forms an alternating stripe 2 cells wide. The beauty of such a stripe is that the sides of it can fit into an existing checkerboard pattern.
+\begin{figure}[H]
+	\begin{tikzpicture}
+		\path[draw=black,fill=white] (0,0) rectangle (1,1);
+		\path[draw=black,fill=white] (1,0) rectangle (2,1);
+		\path[draw=white,fill=black] (-1,0) rectangle (0,1);
+		\path[draw=white,fill=black] (0,1) rectangle (1,2);
+		\path[draw=white,fill=black] (0,-1) rectangle (1,0);
+		
+		\path[draw=white,fill=black] (2,0) rectangle (3,1);
+		\path[draw=white,fill=black] (1,1) rectangle (2,2);
+		\path[draw=white,fill=black] (1,-1) rectangle (2,0);
+		
+		\node[text=white,align=center] at (0.5,1.5) {b};
+		\node[text=white,align=center] at (1.5,1.5) {c};
+		\node[text=white,align=center] at (0.5,-0.5) {d};
+		\node[text=white,align=center] at (1.5,-0.5) {e};
+	\end{tikzpicture}
+\end{figure}
+Now we recognize that the pairs of $b$ and $c$, and $d$ and $e$, are just like the pair $S$ and $a$. Thus, we can continue the pattern up and down arbitrarily. This forms an alternating stripe 2 cells wide. The beauty of such a stripe is that the sides of it can fit into an existing checkerboard pattern. See figure \ref{0PowStripes} for examples.
 \begin{theorem}
 There cannot be both horizontal and vertical stripes on a $0$-power UPC.
 \end{theorem}
@@ -387,7 +652,7 @@ Consider a 0-power UPC. Without loss of generality, let any stripes be vertical.
 On a given row of a checkerboard configuration $n$ cells wide, you have $n$ pairs of cells on different sides. Each stripe removes one of these pairs. Hence by lemma \ref{pairsLemma}. %FINISH?
 \end{proof}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{\linewidth}
     \centering
@@ -400,6 +665,7 @@ On a given row of a checkerboard configuration $n$ cells wide, you have $n$ pair
     \caption{A $0$-power UPC on an 11-by-12 torus with one stripe}  
   \end{subfigure}
   \caption{}
+  \label{0PowStripes}
 \end{figure}
 
 
@@ -433,14 +699,15 @@ All $x$-by-$y$ boards where both $x$ and $y$ are odd do not have any $\frac{1}{3
 All $x$-by-$y$ grids where $x$ and $y$ are not both odd has at least one $\frac{1}{3}$-power UPC.  
 \end{theorem}
 \begin{proof}
-All boards with at least one even dimension can have a \textit{1-stripe} configuration. The first step in constructing such a configuration is to choose one of the even dimensions. Fill the columns of that dimension with alternating sides. This will form a sequence of columns, with each column being sandwiched between two columns of the opposite side. This ensures that every cell has two neighbors on the opposite side from the adjacent columns, and two neighbors on the same side above and below it in the column.
+All boards with at least one even dimension can have a \textit{1-stripe} configuration (see figure \ref{3PowStripes}). The first step in constructing such a configuration is to choose one of the even dimensions. Fill the columns of that dimension with alternating sides. This will form a sequence of columns, with each column being sandwiched between two columns of the opposite side. This ensures that every cell has two neighbors on the opposite side from the adjacent columns, and two neighbors on the same side above and below it in the column.
 % CONSTRUCTION!
 \begin{example}
 % EXAMPLE OF 1-stripes
-\begin{figure}[H]
+\begin{figure}
   \centering
   \fbox{\includegraphics[width=0.5\linewidth]{1-stripes.png}}
   \caption{An example of a 1-stripes configuration on a 16-by-12 torus}
+  \label{3PowStripes}
 \end{figure}
 \begin{remark}
 Because of symmetry of side, two opposite configurations can be constructed this way. As well, Boards with two even dimensions will have double the configurations, since they have two choices of dimension to make the columns in. 
@@ -449,10 +716,10 @@ Because of symmetry of side, two opposite configurations can be constructed this
 \end{proof}
 
 \par
-Here are the empirical data on the numbers of different $\frac{1}{3}$ UPCs for different dimensions.
+See table \ref{Empirical3UPCs} for the empirical data on the numbers of different $\frac{1}{3}$ UPCs for different dimensions.
 % TABLE WITH NUMBERS OF 1/3 POWER UPCS OF A GIVEN DIMENSION
 % SHOULD I REPLACE THE "-"S WITH 0'S?
-\begin{table}[H]
+\begin{table}
 \begin{tabular}{l r | *{9}{r} }
   & & y dimension & & & & & & \\
   & & 2 & 3 & 4 & 5 & 6 & 7 & 8 & & 10\\ \hline
@@ -467,29 +734,36 @@ Here are the empirical data on the numbers of different $\frac{1}{3}$ UPCs for d
 & 10 & & & & & & & & & 28 \\
 \end{tabular}
 \caption{}
+\label{Empirical3UPCs}
 \end{table}
 %CONSIDERATIONS OF POSSIBLE DIMENSIONS
-The diagonal is of particular interest. At the time of writing, these first 5 terms do not appear in any sequence on the OEIS. \\
+The diagonal of table \ref{Empirical3UPCs} is of particular interest. At the time of writing, these first 5 terms do not appear in any sequence on the OEIS. \\
 
 \par Figure \ref{All3rd} shows all the constant $\frac{1}{3}$-power configurations for 10-by-10. 
 
 \begin{proposition}
 There are three other classes of $\frac{1}{3}$-power UPCs. They are as follows: concentric squares, \textit{staircases}, and exotic. \\
 \begin{itemize}
-  \item Concentric squares are configurations on $4n$-by-$4n$ tori. They are constructed by tesselating a subconfiguration of concentric squares, alternating sides as you tesselate. This subconfiguration is made by starting with a 2-by-2 square, and alternating sides while adding a border, up to a maximum size of $2n$-by-$2n$.
-  \begin{figure}[H]
+  \item Concentric squares are configurations on $4n$-by-$4n$ tori. They are constructed by tessellating a subconfiguration of concentric squares, alternating sides as you tessellate. This subconfiguration is made by starting with a 2-by-2 square, and alternating sides while adding a border, up to a maximum size of $2n$-by-$2n$. See figure \ref{CCircles}.
+  \begin{figure}
     \centering
     \fbox{\includegraphics[width=0.25\linewidth]{ccircles.png}}
+    \caption{A concentric cicles configuration}
+    \label{CCircles}
   \end{figure}
-  \item Staircase configurations involve a continuous path of cells following a repeating pattern of \emph{rights} and \emph{ups}.
-  \begin{figure}[H]
+  \item Staircase configurations involve a continuous path of cells following a repeating pattern of \emph{rights} and \emph{ups}. See figure \ref{Staircase}.
+  \begin{figure}
     \centering
     \fbox{\includegraphics[width=0.25\linewidth]{3rdData10x10_26.png}}
+    \caption{A staircase configuration}
+    \label{Staircase}
   \end{figure}
-  \item Exotic configurations are all other configurations. Not much is known about them. They typically combine squares and paths.
-  \begin{figure}[H]
+  \item Exotic configurations are all other configurations. Not much is known about them. They typically combine squares and paths. See figure \ref{Exotic}.
+  \begin{figure}
     \centering
     \fbox{\includegraphics[width=0.25\linewidth]{3rdData10x10_16.png}}
+    \caption{An exotic configuration}
+    \label{Exotic}
   \end{figure}
 \end{itemize}
 % ELABORATE
@@ -497,7 +771,7 @@ There are three other classes of $\frac{1}{3}$-power UPCs. They are as follows: 
 \end{proposition}
 
 
-\begin{figure}[H]
+\begin{figure}
   \begin{tabular}{ c | c | c | c }
   \includegraphics[width=0.2\linewidth]{3rdData10x10_1.png} & \includegraphics[width=0.2\linewidth]{3rdData10x10_2.png} & \includegraphics[width=0.2\linewidth]{3rdData10x10_3.png} & \includegraphics[width=0.2\linewidth]{3rdData10x10_4.png} \\ \hline
   \includegraphics[width=0.2\linewidth]{3rdData10x10_5.png} & \includegraphics[width=0.2\linewidth]{3rdData10x10_6.png} & \includegraphics[width=0.2\linewidth]{3rdData10x10_7.png} & \includegraphics[width=0.2\linewidth]{3rdData10x10_8.png} \\ \hline
@@ -545,11 +819,11 @@ $\{ \left(x,y,z\right) \in [0,1]^3 : x+y+z=1 \}$
 
 \begin{example}
 $\left( \frac{1}{4} , \frac{3}{4} \right) $ could be a subconfiguration proportion for the SPS of single cells.
- 
+
 \end{example}
 
 \begin{definition}[Ratio function]
-A ratio operator $R(G)$ is a function from a game $G$ to a subconfiguration proportion. Each SPS has an associated ratio operator.
+A ratio operator $R$ is a function from a game $G$ to a subconfiguration proportion. Each SPS has an associated ratio operator.
 \end{definition}
 
 \begin{example}
@@ -557,7 +831,7 @@ Consider a board with a checkerboard pattern of $\mathfrak{w}$ and $\mathfrak{s}
 \end{example} % EXPAND EXAMPLE
 
 \begin{definition}[Ratio chain]
-A ratio chain is a matrix $C$ representing a markov chain that acts on a subconfiguration proportion vector.
+A ratio chain is a matrix $C$ representing a Markov chain that acts on a subconfiguration proportion vector.
 \end{definition}
 
 \begin{proposition}
@@ -588,10 +862,10 @@ This leaves us with questions about two things:
 
 \par
 Both of these questions have several approaches. One can determine a ratio chain for a single iteration by simply constructing a matrix which gives the correct before and after SPs. This ratio chain would be pointless and non-predictive since it could only be constructed by knowing empirically what the next iteration would look like. What we would prefer would be to find as general a way to construct a ratio chain: one which requires as little information as possible to successfully predict the dynamics of the SPS for that game.
-\par
-The first of these questions  % CONTINUE?
-\par
-The seond question, how to determine the error, is similar to the first insofar as there are different approaches with varying degrees of empiricism. 
+%\par
+%The first of these questions  % CONTINUE?
+%\par
+%The second question, how to determine the error, is similar to the first insofar as there are different approaches with varying degrees of empiricism. 
 
 
 % ALGEBRA OUT HOW TO COMPOUND THIS OVER TIME
@@ -600,7 +874,7 @@ The seond question, how to determine the error, is similar to the first insofar 
 \par
 There exists a simple and intuitive way to construct a ratio chain for predicting the first iteration of a random board. It involves enumerating all possible neighborhoods of the SPS subconfigurations, and noting down with what proportions certain subconfigurations change into others. This works because the board is randomized, so each neighborhood has an easily calculable probability. The error in this case is a multidimensional binomial distribution. % is it?
 
-\subsubsection{1-square proportion}
+\subsubsection{1-square Proportions}
 \par
 A 1-square is equivalent to a single cell. There are two possible states that a 1-square can be in, black or white, $\mathfrak{s}$ or $\mathfrak{w}$. The 1-square proportion is a tuple of the percentages of each state of 1-square on the board.
 % definition
@@ -608,20 +882,21 @@ A 1-square is equivalent to a single cell. There are two possible states that a 
 % delta
 \par
 % FIND THE PROBABILITY THAT A RANDOM CELL CHANGES COLOUR
-Consider the closed 2-neighborhood of a cell. Without loss of generality we can fix the centre cell's side. Now, there are $2^{12}$ possible states of this neighborhood. Let $p$ be the proportion of the selected side.
+Consider the closed 2-neighborhood of a cell. Without loss of generality we can fix the center cell's side. Now, there are $2^{12}$ possible states of this neighborhood. Let $p$ be the proportion of the selected side.
 % COME UP WITH BETTER VARIABLE NAMES
 \begin{equation}
-P(Stay The Same)=\frac{\sum^{12}_{i=0}{\left(Configs with i cells that don't change\right)p^i \left(1-p\right)^{12-i}}}{2^{12}}
+P(S)=\frac{\sum^{12}_{i=0}{\left( s_i \right)p^i \left(1-p\right)^{12-i}}}{2^{12}}=1-P(C)
 \end{equation}
 \begin{equation}
-P(Change)=1-P(Stay The Same)
+P(C)=\frac{\sum^{12}_{i=0}{\left( c_i \right)p^i \left(1-p\right)^{12-i}}}{2^{12}}=1-P(S)
 \end{equation}
+Where $S$ and $C$ are the events that the center cell stays the same or changes, $s_i$ is the number of configurations of the 2-neighborhood with $i$ cells of the center's side which \emph{don't} lead to the center cell changing in the next iteration, and $c_i$ is the number of configurations of the 2-neighborhood with $i$ cells of the center's side which \emph{do} lead to the center cell changing in the next iteration.
 % CONSIDER THE SAMPLING DISTRIBUTION OF THAT PROPORTION WITH THE-NUMBER-OF-CELLS SAMPLES
 
 % instability
 \par
 Consider the transition probabilities for a 1-square for the first iteration, generated probabilistically. If we consider the proportion of one side, and what it will be in the next iteration, we see that having equal amounts of both sides appears to be an unstable equilibrium. See figure \ref{fig:cellFirst}.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=\linewidth]{firstIterationCell.png}
 	\caption{}
@@ -629,12 +904,13 @@ Consider the transition probabilities for a 1-square for the first iteration, ge
 \end{figure}
 \par 
 This is intriguing, because in general (see \ref{LongTermB} for more) having a 50-50 split of sides seems not only to be a stable equilibrium, but a sink to which only the most extreme proportions are not attracted to.
-
-\subsubsection{2-square proportion} \label{2squareFirst}
 \par
-2-Square subconfigurations are possible states of 2-by-2 squares. There are 16 such subconfigurations, but usually we consider the subconfigurations up to rotational symmetries leaving us with 6 possible states.
+As for the error in predicted proportion, we can calculate this using a binomial distribution. If there are $n$ cells and we know that the probability that a square will stay the same in the next iteration is $P(S)$, then the variance in the number of cells staying the same is $nP(S)(1-P(S))$. Thus, the standard deviation of that number is $\sqrt{nP(S)(1-P(S))}$, and thus the standard deviation of the proportion of cells staying the same is $\sqrt{\frac{P(S)(1-P(S))}{n}}$. One can do similarly for the changing cells, and from this calculate the standard deviation in proportions of both sides.
+\subsubsection{2-square Proportions} \label{2squareFirst}
+\par
+2-Square subconfigurations are possible states of 2-by-2 squares. There are 16 such subconfigurations, but usually we consider the subconfigurations up to rotational symmetries leaving us with 6 possible states, seen in figure \ref{2Shapes}.
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.3\linewidth}
     \fbox{\includegraphics[width=\linewidth]{side.png}}
@@ -645,11 +921,11 @@ This is intriguing, because in general (see \ref{LongTermB} for more) having a 5
     \caption{Diagonal}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
-    \fbox{\includegraphics[width=\linewidth]{whiteCorner.png}}
+    \fbox{\includegraphics[width=\linewidth]{blackCorner.png}} % I switched back to the old definition of black corner after making this file
     \caption{White Corner}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
-    \fbox{\includegraphics[width=\linewidth]{blackCorner.png}}
+    \fbox{\includegraphics[width=\linewidth]{whiteCorner.png}}
     \caption{Black Corner}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
@@ -661,11 +937,12 @@ This is intriguing, because in general (see \ref{LongTermB} for more) having a 5
     \caption{Black Square}
   \end{subfigure}
   \caption{2-square states}
+  \label{2Shapes}
 \end{figure}
 
 \par
 Here are some pictures with various types of subconfigurations coloured.
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.3\linewidth}
     \fbox{\includegraphics[width=\linewidth]{img0019Coloured2.png}}
@@ -676,11 +953,11 @@ Here are some pictures with various types of subconfigurations coloured.
     \caption{Diagonals}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
-    \fbox{\includegraphics[width=\linewidth]{img0019Coloured5.png}}
+    \fbox{\includegraphics[width=\linewidth]{img0019Coloured4.png}}
     \caption{White Corner}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
-    \fbox{\includegraphics[width=\linewidth]{img0019Coloured4.png}}
+    \fbox{\includegraphics[width=\linewidth]{img0019Coloured5.png}}
     \caption{Black Corner}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
@@ -697,6 +974,7 @@ Here are some pictures with various types of subconfigurations coloured.
 \par
 If we have a random board, then we can easily consider what the starting proportions of these subconfigurations should be. 
 \begin{table}[H]
+\label{InitPropsTable}
 \begin{tabular}{r | l}
   Shape & Expected Starting Proportion \\ \hline
   Side & $\frac{1}{4}$ \\
@@ -712,33 +990,126 @@ If we have a random board, then we can easily consider what the starting proport
 \par
 The problem now is to predict what the proportions of these 6 subconfigurations will be in the next iterations. To accomplish this, we will construct a ratio chain. To construct this chain:
 \begin{enumerate}
-  \item{} Consider the 2-neighborhood around a 2-square
+  \item{} Consider the 2-neighborhood around a 2-square (see figure \ref{2Neighborhood})
   \begin{figure}
-    \caption{2-neighborhood}
+    \label{2Neighborhood}
+    \caption{2-neighborhood around a 2-square marked by '$c$'s}
+    \centering
+    \begin{tikzpicture}
+      \foreach \i in {2,...,3} {
+        \draw(\i,0) rectangle (1+\i,1);
+      }
+      \foreach \i in {1,...,4} {
+        \draw(\i,1) rectangle (1+\i,2);
+      }
+      \foreach \i in {0,...,5} {
+        \draw(\i,2) rectangle (1+\i,3);
+      }
+      \foreach \i in {0,...,5} {
+        \draw(\i,3) rectangle (1+\i,4);
+      }
+      \foreach \i in {1,...,4} {
+        \draw(\i,4) rectangle (1+\i,5);
+      }
+      \foreach \i in {2,...,3} {
+        \draw(\i,5) rectangle (1+\i,6);
+      }
+      \node at (2.5,2.5) {c};
+      \node at (3.5,2.5) {c};
+      \node at (3.5,3.5) {c};
+      \node at (2.5,3.5) {c};
+      %\path[draw=white,fill=black] (2,\i) rectangle (3,1+\i);
+    \end{tikzpicture}    
   \end{figure}
   \item{} For all 6 different subconfigurations:
   \begin{enumerate}
     \item{} For all $2^{20}$ possible neighborhoods:
     \begin{enumerate}
-      \item{} Place the subconfiguration in the centre of the neighborhood.
+      \item{} Place the subconfiguration in the center of the neighborhood.
       \item{} Iterate once.
-      \item{} Record which subconfiguration is now in the centre.
+      \item{} Record which subconfiguration is now in the center.
     \end{enumerate}
     \item{} Divide the counts of the final subconfigurations by $2^{20}$ to normalize them.
   \end{enumerate}
   
 \end{enumerate}
+The Markov chain generated by this is the following:
+\begin{equation}
+  \begin{bmatrix}
+  (\texttt{white squares})' \\
+  (\texttt{black squares})' \\
+  (\texttt{side})' \\
+  (\texttt{diag})' \\
+  (\texttt{white corner})' \\
+  (\texttt{black corner})'
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+  0.815 & 0.000 & 0.069 & 0.105 & 0.005 & 0.422 \\
+  0.000 & 0.820 & 0.069 & 0.105 & 0.422 & 0.005 \\
+  0.020 & 0.020 & 0.643 & 0.196 & 0.127 & 0.127 \\
+  0.006 & 0.006 & 0.001 & 0.115 & 0.006 & 0.006 \\
+  0.003 & 0.155 & 0.108 & 0.239 & 0.408 & 0.033 \\
+  0.155 & 0.003 & 0.108 & 0.239 & 0.033 & 0.408 
+  \end{bmatrix}
+  \begin{bmatrix}
+  (\texttt{white squares}) \\
+  (\texttt{black squares}) \\
+  (\texttt{side}) \\
+  (\texttt{diag}) \\
+  (\texttt{white corner}) \\
+  (\texttt{black corner})
+  \end{bmatrix}
+\end{equation}
+
+Which when applied to the initial conditions in table \ref{InitPropsTable} gives us the proportions for iteration 2 of a random board:
+\begin{table}[H]
+\label{SecondPropsTable}
+\begin{tabular}{r | l}
+  Shape & Predicted Iteration 2 Proportion \\ \hline
+  Side & 0.251 \\
+  Diagonal & 0.018 \\
+  White Corner & 0.177 \\
+  Black Corner & 0.177 \\
+  White Square & 0.188 \\
+  Black Square & 0.188 \\
+\end{tabular}
+\caption{}
+\end{table}
+
+Which is supported by the empirical evidence. % ELABORATE!
 
 %huge section
-\subsection{Long Term Behaviour}
+\subsection{Long Term Behavior}
 \label{LongTermB}
 % HAVE BLURB ABOUT WHY LONG-TERM
 \par
-There are many reasons why we should consider the long-term behaviour of the game. The first being that it represents an averaged or compounded version of the game rules. 
+There are many reasons why we should consider the long-term behavior of the game. The first being that it represents an averaged or compounded version of the game rules. Another is learning about local versus global structure.
+
+\begin{definition}[Long-Term Configuration (LTC)]
+Any configuration which 
+\end{definition}
+
+% REMEMBER TO GO THROUGH AND CHANGE EVERYTHING TO LTC
+
 \par
-It is also about local versus global structure!
+The LTCs seem fairly random, but the board is noticeably different, as shown in figure 18.% \ref{BeforeAfter}.
+% TODO fix this static figure number!
 
 % PICTURES OF BEFORE AND AFTER
+\begin{figure}
+  \label{BeforeAfter}
+  \centering
+  \begin{subfigure}[b]{0.45\linewidth}
+    \fbox{\includegraphics[width=\linewidth]{before.png}}
+    \caption{random starting configuration}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\linewidth}
+    \fbox{\includegraphics[width=\linewidth]{after.png}}
+    \caption{long-term configuration}
+  \end{subfigure}
+  \caption{}
+\end{figure}
 
 \subsubsection{Threshold for Homogeneous Stability} \label{HomoStability}
 % DEFINE HOMOGENEOUS STABILITY?
@@ -762,9 +1133,11 @@ And so by linearity of expected value
 	E(X)=\sum_{i=1}^n \sum_{j=1}^m E(X_{i,j})=\sum_{i=1}^n \sum_{j=1}^m 11p^4 = 11nmp^4
 \end{equation}
 Thus, the critical proportion such that we expect there to be one
-parastable tetromino is $p=\left(\frac{1}{11nm}\right)^{\frac{1}{4}}$
+parastable tetromino is $p=\left(\frac{1}{11nm}\right)^{\frac{1}{4}}$.
+\par
+We can see the empirical evidence for this in figure \ref{HomoDiagrams}.
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.6\linewidth}
     \fbox{\includegraphics[width=\linewidth]{homostableData25x25x25.png}}
@@ -779,28 +1152,61 @@ parastable tetromino is $p=\left(\frac{1}{11nm}\right)^{\frac{1}{4}}$
     \caption{100-by-100 torus. Expected crossover at ${p=\frac{1}{11\times100\times10}}^{\frac{1}{4}}=0.055$}
   \end{subfigure}
   \caption{}
+  \label{HomoDiagrams}
 \end{figure}
 
 \subsubsection{Behaviour of Power} \label{Power}
 
-The power of a grid usually increases over time to approach an asymptote. 
+\par
+The average power of a grid usually increases over time to approach an asymptote. This makes sense intuitively; A more powerful subconfiguration will change its neighbors and not change itself similar to natural selection, or so the intuition goes.
 
-\subsubsection{1-2 and 2-2 Proportions} \label{LongTerm2P}
+\par
+To delve more into the asymptote, we look to figure \ref{AveragePower}. We see that just as the intuition would have, average power increases roughly monotonically. The asymptotic average power seems to be about $0.275$. Why it is this value in particular remains an open problem.
+
+\begin{figure}
+  \caption{}
+  \label{AveragePower}
+  \centering
+  \includegraphics[width=0.75\linewidth]{AveragePower.png}
+\end{figure}
+
+\par
+Perhaps to understand power better we must not look simply at the average power. Figure \ref{PowerDist} shows the numbers of cells with different powers. In the long-term, $\frac{1}{3}$ dominates, followed by $\frac{1}{4}$, with $\frac{1}{5}$ and $0$ taking third and fourth; A simple ordering of highest power means highest proportion. An interesting question, however, is how those powers get to their final proportions. At the start, $\frac{1}{4}$ and $\frac{1}{5}$ jump up significantly before slowly decaying to their equilibria. $\frac{1}{4}$ even surpasses $\frac{1}{3}$ for a dozen iterations. $\frac{1}{3}$ and $0$, on the other hand, both jump down at the beginning. $\frac{1}{3}$ then begins its slow growth to the top, but $0$ continues downward.
+
+\par
+These peculiarities showcase how local behavior does not necessarily favor stronger subconfigurations. Rather, only on the aggregate do stronger subconfigurations win out in the end. This will be discussed more in section \ref{GlobalLocal}.
+
+\begin{figure}
+  \caption{}
+  \label{PowerDist}
+  \centering
+  \includegraphics[width=0.75\linewidth]{PowerDist.png}
+\end{figure}
+
+\subsubsection{2-square Proportions} \label{LongTerm2P}
 %Show why 3-3 not as important via entropy
 %TALK ABOUT WHY IT IS INTERESTING THAT THE PROPORTIONS ARE THE SAME FOR RANDOM SEEDS AND PARASTABLE STARTS
 
 \par
-This segment deals with 
+Recall from section \ref{2squareFirst} the definition of a 2-square. Similar to \ref{2squareFirst}, this section will deal with the \emph{subconfiguration proportions} of 2-squares. To start off let us simply look at an example of the subconfiguration proportions of a random grid over time in figure \ref{2SquaresOverTime}.
 
-\begin{definition}[$n$-$m$ proportion]
-This is the proportions of the different configurations of an $n$ by $m$ rectangle.
-\end{definition}
-
-\begin{figure}[H]
+\begin{figure}
+  \centering
   % MAKE THE TITLES ON THIS GRAPH LARGER!
-  \includegraphics[width=\linewidth]{shapesdata300x300(rand).png}
+  % ALSO EXPLAIN WHAT'S GOING ON FOR ONLY-READERS AND IF NOT COLOUR
+  \includegraphics[width=0.75\linewidth]{LTC2Squares.png}
   \caption{2-square proportions on a 300-by-300 torus over time}
+  \label{2SquaresOverTime}
 \end{figure}
+
+\par
+The first thing we notice looking at figure \ref{2SquaresOverTime} is that sides slowly but steadily increase to one third of the board, and are the most common subconfiguration. Diagonals are the next simplest subconfiguration, jumping down significantly in the first iteration then slowly increasing to an asymptote of one fiftieth of the board. Finally we have squares and corners. Both of these subconfigurations come in two variants, but it is uncommon that their proportions vary much. 
+
+\par
+The subconfigurations with side variants, squares and corners, have several interesting properties. First, they perform a strange oscillation during the first several iterations. Initially we thought this \emph{blip} was merely an accident, but it is consistently present. Secondly, we have hypothesized that any initial asymmetries in squares persist. This can be seen more readily in the parastable case (see figure \ref{ParaLongTerm}). However not much research has been done on this. 
+
+\par
+Extracting from figure \ref{2SquaresOverTime} we find the empirical long-term 2-square proportions.
 
 \begin{table}[H]
 \begin{tabular}{r|l}
@@ -812,7 +1218,20 @@ This is the proportions of the different configurations of an $n$ by $m$ rectang
   White Square & 0.135 \\
   Black Square & 0.135 \\  
 \end{tabular}
+\caption{}
 \end{table}
+
+\par
+One interesting thing is how these same long-term proportions seem to be shared by parastable configurations (see figure \ref{ParaLongTerm}).
+
+% ELABORATE!!!
+
+\begin{figure}
+  \label{ParaLongTerm}
+  \centering
+  \includegraphics[width=0.75\linewidth]{ParaLTC2Squares.png}
+  \caption{2-square proportions on a 300-by-300 starting with only a black 2-square surrounded by white cells}
+\end{figure}
 
 \par
 The variables of 1-2 and 2-2 proportion are intriguing because they directly disprove the hypothesis that the distribution of large subconfigurations is predictable by their smaller subsubconfigurations' proportions. % REWRITE THIS LINE?
@@ -821,7 +1240,7 @@ The variables of 1-2 and 2-2 proportion are intriguing because they directly dis
 % TALK ABOUT HOW MUCH IT DID WORK AND HOW MUCH IT DIDN'T
 \par
 Recall the ratio chain used to model the proportion of 2-squares in section \ref{2squareFirst}. If we apply this ratio chain continuously, we arrive at the following stable state:
-\begin{table}[H]
+\begin{table}
 \begin{tabular}{r|l}
   Shape & Ratio Chain Stable State Proportion \\ \hline
   Side & 0.122 \\
@@ -848,31 +1267,98 @@ If we compare these data to the empirical long-term proportions, we get some mix
   White Square & 0.062 & 0.135 & 0.320 & 0.185 \\
   Black Square & 0.062 & 0.135 & 0.320 & 0.185 \\
 \end{tabular}
+\caption{}
 \end{table}
-\par The first thing that you will notice is that the ratio chain gets the long-term proportions significantly wrong. However, there is also an interesting trend. With the exception of sides, every proportion moves "in the right direction". Diagonals decrease significantly, and the ratio chain reflects this. The corners decrease slightly, and the ratio chain reflects this. The squares increase significantly, and the ratio chain reflects this. In all these cases, the ratio chain appears to simply \textit{overshoot} its target.
+\par The first thing that you will notice is that the ratio chain gets the long-term proportions significantly wrong. However, there is also an interesting trend. With the exception of sides, every proportion moves "in the right direction". Diagonals decrease significantly, and the ratio chain reflects this. The corners decrease slightly, and the ratio chain reflects this. The squares increase significantly, and the ratio chain reflects this. In all these cases, the ratio chain appears to simply \emph{overshoot} its target.
+
+\par
+After this, we tried several tweaks to the method of generating the ratio chain. Initially we thought it was a problem of needing to weigh the different possible neighborhoods. We tried weighing the probability contribution of each neighborhood by $e^{|(\vec{e}-\vec{a}|}$, where $e$ was the expected 2-2 proportion SP of the neighborhood and $a$ was the actual SP of the neighborhood being considered. This did not work as well as expected either.
+% MAYBE PUT IN THE ACTUAL CHAIN
+
+\par
+Finally, we decided that the most foolproof method of constructing a ratio chain for long-term 2-2 proportions would be to simply sample the transition probabilities of randomly sampled 2-squares on boards which had reached their long-term state. For this chain we also considered all 16 possible 2-square subconfigurations, rather than collapsing rotationally equivalent ones. The results of this test were, however, even worse than the original ratio chain. The stable-state solution of the Markov chain was the following:
+
+\begin{table}[H]
+\begin{tabular}{r|c c c | l}
+  Shape & Actual Starting & Actual Final & Ratio Chain Final & Final Error \\ \hline
+  Side         & 0.250 & 0.334 & 0.018 & -0.316 \\
+  Diagonal     & 0.125 & 0.020 & 0.115 & 0.095 \\
+  White Corner & 0.250 & 0.188 & 0.033 & -0.155 \\
+  Black Corner & 0.250 & 0.188 & 0.034 & -0.154 \\
+  White Square & 0.062 & 0.135 & 0.394 & 0.259 \\
+  Black Square & 0.062 & 0.135 & 0.406 & 0.271 \\
+\end{tabular}
+\caption{}
+\end{table}
+
+% SIGNIFICANCE OF THIS FOR RATIO CHAIN MODELLING
 
 \subsubsection{Stability Over Time}
-The number of cells that changed in the last iteration decreases over time, towards an asymptote.
+The game tends to start off chaotic and then grow more stable over time. A simple way to see this is the number of cells that changed in the last iteration decreases over time, towards an asymptote (see figure \ref{ChangeOverTime}). 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=0.75\linewidth]{changeProps.png}
   \caption{}
+  \label{ChangeOverTime}
 \end{figure}
+
+% ALSO MENTION HOW POWER IS INVOLVED
+\par
+Power likely plays an integral role in increasing stability. As was mentioned in section \ref{Power}, the average power of the game increases over time. There are less neighborhoods for a high power cell to change than for a low power one. 
 
 \subsubsection{Cycle length}
 
-\begin{figure}[H]
+% INTRO & EXPLAIN GRAPH & SLOPE
+\begin{definition}[pre-cycle length]
+This is the number of iterations until the game reaches the first state which is part of the final cycle.
+% MAKE THIS BETTER?
+\end{definition}
+\par
+The data from simulations for the pre-cycle length are in figure \ref{Precycle}. 
+
+\begin{figure}
+  \centering
+  \label{Precycle}
   \includegraphics[width=\linewidth]{precycles.png}
-  \caption{Precycle length for random $n$-by-$n$ boards where $5\leq n \leq 100$}
+  \caption{Precycle length for random $n$-by-$n$ boards where $5\leq n \leq 100$. Error bars show 1 stdev}
 \end{figure} % MENTION HOW THE LINE OVERESTIMATES AT THE SMALL VALUES?
 
 \par
-There's an argument here for why the global structure of the game cannot be determined by just the local structure of the game. This is because if the only the local structure mattered, then the precycle length shouldn't be increasing (at all? linearly? should it approach an asymptote?).
+There's an argument here for why the global structure of the game cannot be determined by just the local structure of the game. This is because if the only the local structure mattered, then there should be some finite area around each cell which determines its long-term state, and some corresponding time for that long-term state to be reached. Anything outside that area should not affect it. This would mean that once the board was larger than this area, any larger boards should not affect the time to reach long-term state. Thus, the pre-cycle length should eventually plateau. Perhaps this area is very large, but it seems more likely such an area does not exist.
+
+\par
+There is also potentially pertinent information in the slope of the data in figure \ref{Precycle}. Notice that it is about $2.25$. The maximum distance between two points on an $n$-by-$n$ torus is $2n$. Changes in the power-index game generally travel one cell at a time (there are certain special circumstances in which changes can induce changes 2 cells away by increasing the power of their neighbor). So, the fact that it takes just slightly longer than $2n$ iterations for the game to reach its precycle suggests that the starting state of every cell acts like a \emph{ripple}, and once that ripple has passed over every other cell, they can finally take their final states, as no new information is arriving. I hypothesize that it is just a constant number of iterations after all the ripples have finished that every cell takes its final state, and so asymptotically the slope of the pre-cycle against diameter of the torus should be 2.
+
 
 \subsubsection{The Search for Entropy}
+\par
+One of the more exotic directions which we explored to try to gain some insight into the long-term behavior of the game was examining the Shannon entropy of various SPSs over time, and their long-term values. We expected the game to move away from random as time went on, and this was borne out by the data. Another surprising result is that the long-term entropy of larger-scale SPSs was lower. % IS THIS SURPRISING?
 
-\subsection{Some other results}
+\subsubsection{Global vs Local} \label{GlobalLocal}
+\par
+The successes and failures of these attempts at using ratio chains to model the game lead us to a question: To what extent is the behavior of the game determined by local or global structure. Let us elaborate on these two situations.
+
+\par
+First, local behavior is behavior determined solely by the cells within some finite area. An example of this is the behavior of a cell over a single iterations, since it is only affected by cells within its 2-neighborhood. Local behavior is nice because it limits the scope which we must examine to determine what will happen.
+
+\par
+Global behavior is the opposite of local behavior. It is behavior which depends on the state of the entire game. Changes on one side of the board can affect the other side, no matter how far.
+
+\par
+Some phenomena of the power-index game are local while others are global. Parastability on an empty grid (see \ref{EmptyGrid}) is an example of a global phenomena since it reaches out arbitrarily far enough given enough iterations. This is intriguing because there are parastable subconfigurations as small as 4 cells, so having just one on an otherwise empty board can make all the difference in terms of long-term structure. % continue
+
+\par
+However, some configurations seem to naturally \emph{insulate} against changes. Changing a single cell on a LTC rarely induces changes that travel very far. The same is also true of $\frac{1}{3}$-power UPCs. Other UPCs don't share this same stability, so this likely stems from them having a lower-than optimal average power.
+
+\par
+The pre-cycle length also might contain some clues about the global nature of LTCs. Empirically the pre-cycle length seems to increase linearly with the size of the board. If the long-term state of a cell were determined by some finite area around it, then it should have some set time to stabilize which shouldn't be exceeded just because the board is larger than that area.
+
+% cycle length
+% Entropy
+% cooling
+
+%\subsection{Some other results}
 
 %Spectrum stuff
 %Crystalization (parastability breaking down at 50%-prob-of-changing)
@@ -880,24 +1366,47 @@ There's an argument here for why the global structure of the game cannot be dete
 %transition matrix images
 
 \section{Conclusion}
+\par
+The Power-Index game has many different interesting phenomena. It is more complex than it appears at first glance. The glider we found reaffirms the earlier result that there was not an upper limit on cycle size, despite the general tendency for the game to "calm down". We also examined many uniform power configurations, which showed just how rich the structures of the game can be. Finally, we tried to crack the code of long-term configurations. This, we did not accomplish, but that only underlines its complexity.
 
-In conclusion, 
+\par
+We introduced many new concepts in this paper. Many of them were made in the hope of shedding more light on the larger and longer scale structures of the game. We explored the concept of ratio chains to see how they might be used to model the power-index game in an aggregate way. We found them to be readily applicable in the first implementation. However we discovered many difficulties in extending that applicability to the long-term. Hopefully our attempts will lay the groundwork for future success at that task.
+
+\par
+One of the main takeaways of this research is that there are many unexplored frontiers to the power-index game. We have but dipped our toes in the ocean that is enumerating all stable configurations. We have only just started learning how to use ratio chains to simplify modelling the game. We have just scratched the surface of characterizing long-term configurations. But as the proverb goes, \emph{the journey of a thousand miles begins with a single step}.
+
+% 
+% RATIO CHAINS
+% SHORT TERM
+% LONG TERM
+% STABILITY
+
 
 \subsection{Open Problems}
 \begin{itemize}
 \item
-Enumerating all $\frac{1}{3}$ - power stable configurations. This is equivalent to the general problem of colouring cells on a torus such that each cell has two neighbors of each colour. (see \ref{UPCs})
-\item
 Enumerating all stable subconfigurations on an empty grid (see \ref{EmptyGrid}).
+\item
+Enumerating all $\frac{1}{3}$ - power stable configurations. This is equivalent to the general problem of colouring cells on a torus such that each cell has two neighbors of each colour. (see \ref{UPCs})
 \item
 Variance of the threshold for homogeneous stability. (see \ref{HomoStability})
 \item
 Proof for maximum average power. (see \ref{Power})
 \item
-Method of constructing a ratio-chain for long-term behaviour. (see \ref{LongTerm2P})
+Under what circumstances do asymmetries form and persist in square and corner 2-square subconfigurations. (see \ref{LongTerm2P})
+\item
+Method of constructing a ratio-chain for long-term behavior. (see \ref{LongTerm2P})
+
 \end{itemize}
-% TODO BIBLIOGRAPHY? DO I HAVE SOURCES?
 
 \subsection{Acknowledgments}
+\begin{itemize}
+\item \textbf{Jeannette Janssen} and \textbf{Jordan Barrett} for their supervision and guidance. 
+\item \textbf{NSERC} for making this all possible through their funding.
+\item \textbf{Dalhousie}
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{./references}{}
 
 \end{document}
